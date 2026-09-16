@@ -2,25 +2,21 @@
   "template_id": "04_table_chart",
   "template_name": "Table + Chart",
   "version": "1.0",
-
   "canvas": {
     "width": 1920,
     "height": 1080,
     "aspect_ratio": "16:9"
   },
-
   "background": {
     "asset": "bg_01.png",
     "type": "image"
   },
-
   "safe_area": {
     "x": 83,
     "y": 48,
     "width": 1754,
     "height": 984
   },
-
   "regions": {
     "left_column": {
       "type": "container",
@@ -31,7 +27,6 @@
       "width": 790,
       "height": 850
     },
-
     "right_column": {
       "type": "container",
       "role": "table_information_column",
@@ -41,7 +36,6 @@
       "width": 790,
       "height": 850
     },
-
     "context_note": {
       "type": "text",
       "role": "chart_context",
@@ -52,7 +46,6 @@
       "height": 75,
       "allow_wrap": true
     },
-
     "chart": {
       "type": "chart",
       "role": "primary_chart",
@@ -61,14 +54,12 @@
       "y": 185,
       "width": 750,
       "height": 570,
-
       "constraints": {
         "minimum_width": 600,
         "minimum_height": 400,
         "preserve_aspect_ratio": true
       }
     },
-
     "section_heading": {
       "type": "text",
       "role": "content_heading",
@@ -80,7 +71,6 @@
       "allow_wrap": true,
       "maximum_lines": 2
     },
-
     "narrative": {
       "type": "text",
       "role": "content_narrative",
@@ -92,7 +82,6 @@
       "allow_wrap": true,
       "maximum_lines": 5
     },
-
     "table": {
       "type": "table",
       "role": "analytical_table",
@@ -101,7 +90,6 @@
       "y": 250,
       "width": 730,
       "height": 370,
-
       "layout": {
         "columns": "dynamic",
         "rows": "dynamic",
@@ -109,7 +97,6 @@
         "auto_column_width": true
       }
     },
-
     "supporting_insight": {
       "type": "text",
       "role": "supporting_insight",
@@ -121,11 +108,7 @@
       "allow_wrap": true
     }
   },
-
   "components": {},
-
-  "layout": {},
-
   "typography": {
     "context_note": {
       "font_size": 20,
@@ -133,34 +116,29 @@
       "maximum_font_size": 21,
       "font_weight": "normal"
     },
-
     "section_heading": {
       "font_size": 25,
       "minimum_font_size": 21,
       "maximum_font_size": 27,
       "font_weight": "bold"
     },
-
     "narrative": {
       "font_size": 21,
       "minimum_font_size": 17,
       "maximum_font_size": 22,
       "font_weight": "normal"
     },
-
     "table": {
       "font_size": 18,
       "minimum_font_size": 14,
       "maximum_font_size": 19
     },
-
     "supporting_insight": {
       "font_size": 19,
       "minimum_font_size": 16,
       "maximum_font_size": 20
     }
   },
-
   "spacing": {
     "column_gap": 45,
     "context_to_chart": 25,
@@ -168,20 +146,17 @@
     "narrative_to_table": 15,
     "table_to_insight": 25
   },
-
   "constraints": {
     "layout": {
       "two_column": true,
       "preserve_column_alignment": true,
       "preserve_chart_table_balance": true
     },
-
     "chart": {
       "minimum_width": 600,
       "minimum_height": 400,
       "allow_resize": true
     },
-
     "table": {
       "auto_row_height": true,
       "auto_column_width": true,
@@ -190,13 +165,11 @@
       "allow_split": true,
       "minimum_font_size": 14
     },
-
     "text": {
       "allow_wrap": true,
       "prevent_clipping": true
     }
   },
-
   "overflow": {
     "strategy": [
       "measure_text",
@@ -208,7 +181,6 @@
       "move_supporting_content_to_continuation_slide",
       "split_table_if_required"
     ],
-
     "never": [
       "crop_text",
       "overlap_regions",
@@ -216,36 +188,28 @@
       "reduce_chart_below_minimum_dimensions"
     ]
   },
-
   "content_model": {
     "type": "table_chart",
-
     "required": [
       "chart",
       "table"
     ],
-
     "properties": {
       "context_note": {
         "type": "string"
       },
-
       "section_heading": {
         "type": "string"
       },
-
       "narrative": {
         "type": "string"
       },
-
       "chart": {
         "type": "chart"
       },
-
       "table": {
         "type": "table"
       },
-
       "supporting_insight": {
         "type": "string"
       }

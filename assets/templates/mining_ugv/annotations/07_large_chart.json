@@ -2,25 +2,21 @@
   "template_id": "07_large_chart",
   "template_name": "Large Chart",
   "version": "1.0",
-
   "canvas": {
     "width": 1920,
     "height": 1080,
     "aspect_ratio": "16:9"
   },
-
   "background": {
     "asset": "bg_01.png",
     "type": "image"
   },
-
   "safe_area": {
     "x": 83,
     "y": 48,
     "width": 1754,
     "height": 984
   },
-
   "regions": {
     "chart_title": {
       "type": "text",
@@ -35,7 +31,6 @@
       "allow_wrap": true,
       "maximum_lines": 2
     },
-
     "chart_legend": {
       "type": "chart_component",
       "role": "chart_legend",
@@ -46,7 +41,6 @@
       "height": 50,
       "alignment": "center"
     },
-
     "chart": {
       "type": "chart",
       "role": "primary_chart",
@@ -55,14 +49,12 @@
       "y": 235,
       "width": 1650,
       "height": 650,
-
       "layout": {
         "type": "chart_container",
         "internal_layout": "dynamic"
       }
     }
   },
-
   "components": {
     "chart": {
       "type": "chart",
@@ -74,9 +66,6 @@
       ]
     }
   },
-
-  "layout": {},
-
   "typography": {
     "chart_title": {
       "font_size": 31,
@@ -85,26 +74,22 @@
       "font_weight": "normal",
       "alignment": "center"
     },
-
     "chart_axis": {
       "font_size": 17,
       "minimum_font_size": 12,
       "maximum_font_size": 19
     },
-
     "chart_legend": {
       "font_size": 18,
       "minimum_font_size": 13,
       "maximum_font_size": 20
     },
-
     "chart_data_label": {
       "font_size": 14,
       "minimum_font_size": 11,
       "maximum_font_size": 16
     }
   },
-
   "spacing": {
     "title_to_legend": 8,
     "legend_to_chart": 20,
@@ -113,38 +98,32 @@
     "chart_margin_top": 20,
     "chart_margin_bottom": 70
   },
-
   "constraints": {
     "layout": {
       "primary_content": "chart",
       "chart_width": "maximum_available",
       "chart_height": "maximum_available"
     },
-
     "chart": {
       "minimum_width": 900,
       "minimum_height": 450,
       "allow_resize": true,
       "preserve_readability": true
     },
-
     "legend": {
       "allow_wrap": true,
       "allow_reposition": true
     },
-
     "axis_labels": {
       "allow_wrap": true,
       "allow_rotation": true,
       "prevent_clipping": true
     },
-
     "text": {
       "prevent_clipping": true,
       "prevent_overlap": true
     }
   },
-
   "overflow": {
     "strategy": [
       "measure_chart_content",
@@ -155,9 +134,7 @@
       "reduce_chart_font_size_within_limits",
       "create_continuation_slide"
     ],
-
     "continuation_template": "07_large_chart",
-
     "never": [
       "crop_axis_labels",
       "crop_legend",
@@ -166,28 +143,22 @@
       "reduce_chart_below_minimum_dimensions"
     ]
   },
-
   "content_model": {
     "type": "large_chart",
-
     "required": [
       "title",
       "chart"
     ],
-
     "properties": {
       "title": {
         "type": "string"
       },
-
       "chart": {
         "type": "object",
-
         "required": [
           "type",
           "data"
         ],
-
         "properties": {
           "type": {
             "enum": [
@@ -196,15 +167,12 @@
               "pie"
             ]
           },
-
           "data": {
             "type": "array"
           },
-
           "series": {
             "type": "array"
           },
-
           "categories": {
             "type": "array"
           }

@@ -25,7 +25,24 @@
           { "$ref": "#/definitions/chart_content" },
           { "$ref": "#/definitions/image_content" },
           { "$ref": "#/definitions/bullet_list_content" },
-          { "$ref": "#/definitions/insight_content" }
+          { "$ref": "#/definitions/insight_content" },
+          { "$ref": "#/definitions/toc_item_content" },
+          { "$ref": "#/definitions/index_item_content" },
+          {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                { "$ref": "#/definitions/text_content" },
+                { "$ref": "#/definitions/table_content" },
+                { "$ref": "#/definitions/chart_content" },
+                { "$ref": "#/definitions/image_content" },
+                { "$ref": "#/definitions/bullet_list_content" },
+                { "$ref": "#/definitions/insight_content" },
+                { "$ref": "#/definitions/toc_item_content" },
+                { "$ref": "#/definitions/index_item_content" }
+              ]
+            }
+          }
         ]
       }
     },
@@ -122,6 +139,26 @@
             }
           }
         }
+      }
+    },
+    "toc_item_content": {
+      "type": "object",
+      "required": ["type", "number", "title"],
+      "properties": {
+        "type":   { "type": "string", "const": "toc_item" },
+        "id":     { "type": "string" },
+        "number": { "type": "string" },
+        "title":  { "type": "string" }
+      }
+    },
+    "index_item_content": {
+      "type": "object",
+      "required": ["type", "number", "title"],
+      "properties": {
+        "type":   { "type": "string", "const": "index_item" },
+        "id":     { "type": "string" },
+        "number": { "type": "string" },
+        "title":  { "type": "string" }
       }
     }
   }

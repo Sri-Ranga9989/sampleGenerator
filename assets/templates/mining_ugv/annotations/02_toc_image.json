@@ -2,25 +2,21 @@
   "template_id": "02_toc_image",
   "template_name": "Table of Contents",
   "version": "1.0",
-
   "canvas": {
     "width": 1920,
     "height": 1080,
     "aspect_ratio": "16:9"
   },
-
   "background": {
     "asset": "bg_01.png",
     "type": "image"
   },
-
   "safe_area": {
     "x": 70,
     "y": 40,
     "width": 1240,
     "height": 970
   },
-
   "regions": {
     "title": {
       "type": "text",
@@ -33,7 +29,6 @@
       "alignment": "center",
       "vertical_alignment": "middle"
     },
-
     "left_column": {
       "type": "container",
       "role": "toc_column",
@@ -42,7 +37,6 @@
       "y": 140,
       "width": 560,
       "height": 875,
-
       "layout": {
         "type": "vertical_stack",
         "items": "dynamic",
@@ -50,7 +44,6 @@
         "maximum_items": 9
       }
     },
-
     "right_column": {
       "type": "container",
       "role": "toc_column",
@@ -59,7 +52,6 @@
       "y": 140,
       "width": 620,
       "height": 875,
-
       "layout": {
         "type": "vertical_stack",
         "items": "dynamic",
@@ -68,12 +60,10 @@
       }
     }
   },
-
   "components": {
     "toc_item": {
       "type": "component",
       "role": "toc_item",
-
       "badge": {
         "type": "shape",
         "shape": "diamond",
@@ -84,7 +74,6 @@
           "enabled": false
         }
       },
-
       "number": {
         "type": "text",
         "position": "center",
@@ -92,7 +81,6 @@
         "alignment": "center",
         "color": "#FFFFFF"
       },
-
       "label": {
         "type": "text",
         "x_offset": 96,
@@ -103,16 +91,12 @@
       }
     }
   },
-
-  "layout": {},
-
   "typography": {
     "title": {
       "font_weight": "bold",
       "font_size": 32,
       "alignment": "center"
     },
-
     "toc_label": {
       "font_weight": "bold",
       "font_size": 22,
@@ -120,42 +104,35 @@
       "maximum_font_size": 22,
       "line_spacing": 1.05
     },
-
     "toc_number": {
       "font_weight": "bold",
       "font_size": 18
     }
   },
-
   "spacing": {
     "column_gap": 40,
     "item_gap": 26,
     "badge_to_text": 24,
     "minimum_item_gap": 12
   },
-
   "constraints": {
     "preferred_items_per_column": 9,
     "maximum_items_per_column": 9,
     "maximum_items_per_slide": 18,
-
     "text": {
       "allow_wrap": true,
       "maximum_lines_per_item": 2
     },
-
     "font": {
       "allow_dynamic_reduction": true,
       "minimum_toc_font_size": 18
     },
-
     "layout": {
       "preserve_column_alignment": true,
       "preserve_badge_size": true,
       "preserve_visual_hierarchy": true
     }
   },
-
   "overflow": {
     "strategy": [
       "wrap_text",
@@ -164,23 +141,19 @@
       "rebalance_columns",
       "split_into_continuation_slide"
     ],
-
     "never": [
       "crop_text",
       "overlap_items",
       "extend_into_decoration"
     ]
   },
-
   "content_model": {
     "type": "table_of_contents",
-
     "item": {
       "required": [
         "number",
         "title"
       ],
-
       "properties": {
         "number": {
           "type": "string"

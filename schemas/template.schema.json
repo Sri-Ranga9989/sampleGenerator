@@ -12,7 +12,7 @@
     "background",
     "safe_area",
     "regions",
-    "layout",
+    "components",
     "typography",
     "spacing",
     "constraints",
@@ -64,9 +64,16 @@
       "description": "Named regions on the slide. Keys are region IDs.",
       "additionalProperties": { "$ref": "#/definitions/region" }
     },
-    "layout": {
+    "components": {
       "type": "object",
-      "description": "Layout rules (grid, columns, alignment). Template-specific."
+      "description": "Reusable component definitions (e.g. toc_item, insight_block). Keys are component IDs, values define the component's structure, badge, label, and rendering rules.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "role": { "type": "string" }
+        }
+      }
     },
     "typography": {
       "type": "object",
@@ -87,17 +94,6 @@
     "content_model": {
       "type": "object",
       "description": "Describes the expected input data shape for this template."
-    },
-    "components": {
-      "type": "object",
-      "description": "Reusable component definitions (e.g. toc_item, insight_block). Keys are component IDs, values define the component's structure, badge, label, and rendering rules.",
-      "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "type": { "type": "string" },
-          "role": { "type": "string" }
-        }
-      }
     }
   },
   "additionalProperties": false,

@@ -2,25 +2,21 @@
   "template_id": "03_section_opener",
   "template_name": "Section Opener",
   "version": "1.0",
-
   "canvas": {
     "width": 1920,
     "height": 1080,
     "aspect_ratio": "16:9"
   },
-
   "background": {
     "asset": "bg_02.png",
     "type": "image"
   },
-
   "safe_area": {
     "x": 83,
     "y": 48,
     "width": 1810,
     "height": 930
   },
-
   "regions": {
     "section_title": {
       "type": "text",
@@ -35,7 +31,6 @@
       "allow_wrap": true,
       "maximum_lines": 2
     },
-
     "index_list": {
       "type": "container",
       "role": "section_index_list",
@@ -44,14 +39,12 @@
       "y": 230,
       "width": 850,
       "height": 590,
-
       "layout": {
         "type": "vertical_stack",
         "item_type": "index_item",
         "items": "dynamic"
       }
     },
-
     "visual_region": {
       "type": "image",
       "role": "section_visual",
@@ -60,25 +53,21 @@
       "y": 0,
       "width": 905,
       "height": 930,
-
       "content_behavior": {
         "allow_text": false,
         "allow_overlap": false
       }
     }
   },
-
   "components": {
     "index_item": {
       "type": "component",
       "role": "index_item",
-
       "number": {
         "type": "text",
         "width": 65,
         "alignment": "left"
       },
-
       "title": {
         "type": "text",
         "x_offset": 0,
@@ -88,9 +77,6 @@
       }
     }
   },
-
-  "layout": {},
-
   "typography": {
     "section_title": {
       "font_weight": "bold",
@@ -99,7 +85,6 @@
       "maximum_font_size": 44,
       "line_spacing": 0.95
     },
-
     "index_item": {
       "font_weight": "normal",
       "font_size": 21,
@@ -108,29 +93,24 @@
       "line_spacing": 1.05
     }
   },
-
   "spacing": {
     "title_to_index_list": 25,
     "index_item_gap": 10,
     "minimum_index_item_gap": 4
   },
-
   "constraints": {
     "preferred_index_items": 15,
     "maximum_index_items": 15,
-
     "index_item": {
       "preferred_lines": 1,
       "maximum_lines": 2
     },
-
     "layout": {
       "preserve_visual_region": true,
       "preserve_title_hierarchy": true,
       "preserve_left_alignment": true
     }
   },
-
   "overflow": {
     "strategy": [
       "wrap_index_item",
@@ -139,11 +119,8 @@
       "calculate_remaining_capacity",
       "move_remaining_index_items_to_information_slide"
     ],
-
     "continuation_template": "05_insight_information",
-
     "continuation_layout": "multi_column_index_list",
-
     "never": [
       "crop_index_text",
       "overlap_index_items",
@@ -151,40 +128,31 @@
       "shrink_below_minimum_font_size"
     ]
   },
-
   "content_model": {
     "type": "section_opener",
-
     "required": [
       "section_number",
       "section_title"
     ],
-
     "properties": {
       "section_number": {
         "type": "string"
       },
-
       "section_title": {
         "type": "string"
       },
-
       "index_items": {
         "type": "array",
-
         "items": {
           "type": "object",
-
           "required": [
             "number",
             "title"
           ],
-
           "properties": {
             "number": {
               "type": "string"
             },
-
             "title": {
               "type": "string"
             }

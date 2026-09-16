@@ -1,0 +1,315 @@
+{
+  "report_id": "rep_mining_ugv_2026",
+  "title": "Mining Underground Ground Vehicles (UGV) Market",
+  "created_at": "2026-09-16T12:00:00Z",
+  "template_set": "mining_ugv",
+  "defaults": {
+    "background": "bg_01.png",
+    "font_family": "Arial",
+    "accent_color": "#1B365D"
+  },
+  "slides": [
+    {
+      "template_id": "01_cover_title_image",
+      "slide_index": 0,
+      "data": {
+        "title": {
+          "type": "text",
+          "value": "Mining Underground Ground Vehicles (UGV) Market"
+        },
+        "subtitle": {
+          "type": "text",
+          "value": "Global Market Size, Autonomous Technologies & Forecast 2026-2035"
+        },
+        "metadata": {
+          "type": "text",
+          "value": "Strategic Industry Report | Antigravity Research | September 2026"
+        }
+      }
+    },
+    {
+      "template_id": "02_toc_image",
+      "slide_index": 1,
+      "data": {
+        "items": [
+          {"type": "toc_item", "id": "toc_01", "number": "01", "title": "Executive Summary & Industry Outlook"},
+          {"type": "toc_item", "id": "toc_02", "number": "02", "title": "Market Scope & Research Methodology"},
+          {"type": "toc_item", "id": "toc_03", "number": "03", "title": "Autonomous Navigation & Robotics Drivers"},
+          {"type": "toc_item", "id": "toc_04", "number": "04", "title": "Sub-surface Fleet Electrification"},
+          {"type": "toc_item", "id": "toc_05", "number": "05", "title": "Battery Electric vs Diesel Powertrain TCO"},
+          {"type": "toc_item", "id": "toc_06", "number": "06", "title": "Global Market Size & Forecast (2024-2035)"},
+          {"type": "toc_item", "id": "toc_07", "number": "07", "title": "Segment Analysis: Loaders & Haulers"},
+          {"type": "toc_item", "id": "toc_08", "number": "08", "title": "Regional Deep Dive: North America & APAC"},
+          {"type": "toc_item", "id": "toc_09", "number": "09", "title": "Competitive Landscape & OEM Benchmarking"},
+          {"type": "toc_item", "id": "toc_10", "number": "10", "title": "Tier-1 Component & LiDAR Sensor Providers"},
+          {"type": "toc_item", "id": "toc_11", "number": "11", "title": "Safety Regulations & Underground Standards"},
+          {"type": "toc_item", "id": "toc_12", "number": "12", "title": "Mine Modernization & Automation Case Studies"},
+          {"type": "toc_item", "id": "toc_13", "number": "13", "title": "Infrastructure Readiness: Fast Charging & 5G"},
+          {"type": "toc_item", "id": "toc_14", "number": "14", "title": "Key Vendor Strategic Profiles"},
+          {"type": "toc_item", "id": "toc_15", "number": "15", "title": "Emerging M&A and Strategic Partnerships"},
+          {"type": "toc_item", "id": "toc_16", "number": "16", "title": "Supply Chain Dynamics & Battery Raw Materials"},
+          {"type": "toc_item", "id": "toc_17", "number": "17", "title": "Technology Roadmap & Industry Predictions"},
+          {"type": "toc_item", "id": "toc_18", "number": "18", "title": "Conclusions, Recommendations & Next Steps"}
+        ]
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 2,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "value": "1. Market Scope & Fleet Sizing"
+        },
+        "index_list": [
+          {"type": "index_item", "id": "sub_1_1", "number": "1.1", "title": "Autonomous Vehicle Taxonomy & Scope"},
+          {"type": "index_item", "id": "sub_1_2", "number": "1.2", "title": "Operational Profile: Deep Hard-Rock Extraction"},
+          {"type": "index_item", "id": "sub_1_3", "number": "1.3", "title": "Level 2 to Level 4 Autonomy Evolution"},
+          {"type": "index_item", "id": "sub_1_4", "number": "1.4", "title": "Global Regulatory Mandates for Shaft Safety"},
+          {"type": "index_item", "id": "sub_1_5", "number": "1.5", "title": "Key Assumptions & Forecasting Methodology"}
+        ]
+      }
+    },
+    {
+      "template_id": "04_table_chart",
+      "slide_index": 3,
+      "data": {
+        "context_note": {
+          "type": "text",
+          "value": "Comparative growth rate across underground vehicle classifications (2024-2030)"
+        },
+        "chart": {
+          "type": "chart",
+          "id": "ch_04_fleet",
+          "chart_type": "bar",
+          "title": "Autonomous UGV Fleet Adoption by Region (2024 vs 2030)",
+          "data": {
+            "categories": ["North America", "Europe", "Asia Pacific", "Latin America", "MEA"],
+            "series": [
+              {"name": "2024 (Units)", "values": [420, 310, 580, 240, 190]},
+              {"name": "2030 (Units)", "values": [1150, 890, 1680, 710, 540]}
+            ]
+          }
+        },
+        "section_heading": {
+          "type": "text",
+          "value": "Segment Growth Velocity"
+        },
+        "narrative": {
+          "type": "text",
+          "value": "Underground haul trucks represent the largest revenue share, while utility UGVs exhibit the fastest CAGR due to compact teleoperation advancements in low-profile mining veins."
+        },
+        "table": {
+          "type": "table",
+          "id": "tbl_04_summary",
+          "headers": ["Segment", "2024", "2030", "CAGR"],
+          "rows": [
+            ["LHD Loaders", "$1.85B", "$4.20B", "14.6%"],
+            ["Haul Trucks", "$2.40B", "$5.90B", "16.1%"],
+            ["Drill Rigs", "$0.95B", "$2.10B", "14.1%"],
+            ["Utility UGVs", "$0.45B", "$1.15B", "16.9%"]
+          ]
+        },
+        "supporting_insight": {
+          "type": "insight",
+          "id": "ins_04_growth",
+          "blocks": [
+            {
+              "id": "ins_04_growth_b",
+              "title": "Rapid Adoption in High-Labor Cost Markets",
+              "body": "North American and Australian underground operations are aggressively converting to Level 4 automated fleets to counter severe skilled operator shortages."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "template_id": "05_insight_information",
+      "slide_index": 4,
+      "data": {
+        "title": {
+          "type": "text",
+          "value": "Powertrain Transition Dynamics & Total Cost of Ownership"
+        },
+        "left_column": [
+          {
+            "type": "text",
+            "id": "b_05_l1",
+            "value": "Ventilation & Cooling Cost Drivers",
+            "role": "heading"
+          },
+          {
+            "type": "text",
+            "id": "b_05_l2",
+            "value": "Underground mining operators face escalating ventilation cooling and diesel particulate filter maintenance costs. Transitioning to battery electric vehicles (BEVs) reduces required airflow by up to 40% in ultra-deep extraction shafts."
+          },
+          {
+            "type": "bullet_list",
+            "id": "b_05_l3",
+            "items": [
+              {"id": "b_05_l3_1", "text": "Elimination of sub-surface diesel emissions drastically lowers ventilation CAPEX."},
+              {"id": "b_05_l3_2", "text": "Regenerative braking on decline ramps recovers up to 18% of total battery capacity."},
+              {"id": "b_05_l3_3", "text": "Fast megawatt-charging stations enable vehicle turnaround times below 25 minutes."}
+            ]
+          }
+        ],
+        "right_column": [
+          {
+            "type": "text",
+            "id": "b_05_r1",
+            "value": "Regulatory & Environmental Mandates",
+            "role": "heading"
+          },
+          {
+            "type": "text",
+            "id": "b_05_r2",
+            "value": "Stringent workplace safety regulations across Tier-1 mining jurisdictions are accelerating the retirement of older mechanical drive equipment."
+          },
+          {
+            "type": "insight",
+            "id": "b_05_r3",
+            "blocks": [
+              {
+                "id": "b_05_r3_ins",
+                "title": "TCO Breakeven Within 3.2 Years",
+                "body": "Despite higher initial vehicle procurement costs, lower fuel expenses and reduced shaft ventilation requirements yield a compelling 3.2-year payback period for tier-1 operators."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 5,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "value": "2. OEM Benchmarking & Competitive Landscape"
+        },
+        "index_list": [
+          {"type": "index_item", "id": "sub_2_1", "number": "2.1", "title": "OEM Market Share & Production Volumes"},
+          {"type": "index_item", "id": "sub_2_2", "number": "2.2", "title": "Commercial vs Prototype Autonomy Capabilities"},
+          {"type": "index_item", "id": "sub_2_3", "number": "2.3", "title": "Battery Chemistries: LFP vs NMC vs Solid-State"},
+          {"type": "index_item", "id": "sub_2_4", "number": "2.4", "title": "Sub-surface Sensor Suites: LiDAR, Radar & Vision"},
+          {"type": "index_item", "id": "sub_2_5", "number": "2.5", "title": "Strategic Alliances and OEM-Mining Consortia"}
+        ]
+      }
+    },
+    {
+      "template_id": "06_large_table",
+      "slide_index": 6,
+      "data": {
+        "table_title": {
+          "type": "text",
+          "value": "Global Mining UGV OEM Model Specifications & Autonomy Comparison"
+        },
+        "table": {
+          "type": "table",
+          "id": "oem_spec_table",
+          "headers": ["OEM Provider", "Country", "Model Series", "Payload (t)", "Drive Type", "Autonomy Level", "Battery (kWh)", "Deployments", "Status"],
+          "rows": [
+            ["Sandvik Mining", "Sweden", "LH518B / Toro", "18.0", "Battery-Electric", "AutoMine Level 4", "354 kWh", "145 units", "Commercial"],
+            ["Epiroc Group", "Sweden", "Scooptram ST14", "14.0", "Battery-Electric", "Mobilaris L3", "280 kWh", "120 units", "Commercial"],
+            ["Caterpillar Inc", "USA", "R2900 XE", "18.5", "Diesel-Electric", "Cat MineStar L4", "Hybrid", "210 units", "Commercial"],
+            ["Komatsu Mining", "Japan", "WX07 Hybrid", "7.0", "Hybrid Drive", "Autonomous Ready", "180 kWh", "85 units", "Commercial"],
+            ["Normet Group", "Finland", "SmartDrive MF", "10.0", "Full Battery", "Tele-remote", "160 kWh", "60 units", "Commercial"],
+            ["MacLean Engineering", "Canada", "EV Series", "12.0", "Battery-Electric", "Semi-Autonomous", "220 kWh", "75 units", "Commercial"],
+            ["GIA Industri", "Sweden", "Kiruna Electric", "25.0", "Trolley / Battery", "Remote L2", "Trolley Feed", "40 units", "Commercial"],
+            ["Fermel Mining", "South Africa", "Ferret UGV", "5.0", "Battery Electric", "L2 Pilot", "90 kWh", "30 units", "Pilot"],
+            ["Mining3 Alliance", "Australia", "H-UGV Prototype", "15.0", "Hydrogen Hybrid", "Full L4", "Fuel Cell + 100kWh", "8 units", "R&D Prototype"],
+            ["GHH Fahrzeuge", "Germany", "LF-10e", "10.0", "Tethered Electric", "Manual / Remote", "Direct Cable", "50 units", "Commercial"],
+            ["Aard Mining", "South Africa", "Aardvark EV", "8.0", "Battery Electric", "Line-of-Sight", "110 kWh", "25 units", "Commercial"],
+            ["Resemin SAC", "Peru", "Bolter Muki", "6.5", "Electro-Hydraulic", "Tele-operation", "75 kWh", "45 units", "Commercial"]
+          ]
+        }
+      }
+    },
+    {
+      "template_id": "07_large_chart",
+      "slide_index": 7,
+      "data": {
+        "chart_title": {
+          "type": "text",
+          "value": "Global Market Revenue Trajectory Across Scenario Forecasts ($M, 2024-2035)"
+        },
+        "chart": {
+          "type": "chart",
+          "id": "rev_forecast_chart",
+          "chart_type": "line",
+          "title": "Global Autonomous Mining UGV Market Revenue Forecast ($ Millions, 2024-2035)",
+          "data": {
+            "categories": ["2024", "2025", "2026", "2027", "2028", "2029", "2030", "2032", "2035"],
+            "series": [
+              {"name": "Base Scenario", "values": [4200, 4850, 5600, 6520, 7600, 8900, 10450, 14200, 21500]},
+              {"name": "Accelerated Transition", "values": [4200, 5100, 6200, 7550, 9200, 11200, 13700, 19500, 29800]},
+              {"name": "Conservative Outlook", "values": [4200, 4600, 5100, 5700, 6400, 7200, 8150, 10500, 15200]}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "template_id": "08_multi_table_dashboard_2col",
+      "slide_index": 8,
+      "data": {
+        "title": {
+          "type": "text",
+          "value": "Subsystem Architecture: Energy Storage & Autonomous Perception"
+        },
+        "left_column": [
+          {
+            "type": "text",
+            "id": "dash_l_h",
+            "value": "Battery Chemistries in Deep Hard-Rock Extraction",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "dash_tbl_1",
+            "headers": ["Battery Chem", "Cycle Life", "Cost/kWh"],
+            "rows": [
+              ["LFP", "4,000", "$115"],
+              ["NMC 811", "2,200", "$145"],
+              ["Solid-State", "5,000+", "$210"]
+            ]
+          },
+          {
+            "type": "text",
+            "id": "dash_l_p",
+            "value": "Lithium Iron Phosphate (LFP) dominates heavy underground loaders due to superior thermal runaway stability in confined shaft environments."
+          }
+        ],
+        "right_column": [
+          {
+            "type": "text",
+            "id": "dash_r_h",
+            "value": "Perception & Sensor Stack Architecture",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "dash_tbl_2",
+            "headers": ["Sensor Type", "Range (m)", "Dust Penetration"],
+            "rows": [
+              ["Solid-State LiDAR", "150m", "Moderate"],
+              ["77 GHz Radar", "250m", "High (Superior)"],
+              ["Thermal Vision", "80m", "High"]
+            ]
+          },
+          {
+            "type": "insight",
+            "id": "dash_r_ins",
+            "blocks": [
+              {
+                "id": "dash_r_ins_b",
+                "title": "Multi-Modal Sensor Fusion Crucial",
+                "body": "Zero-visibility blast smoke and high-humidity environments necessitate integrated radar-LiDAR sensor fusion for continuous Level 4 underground navigation."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

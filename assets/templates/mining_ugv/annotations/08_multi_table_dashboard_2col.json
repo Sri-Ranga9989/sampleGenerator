@@ -2,25 +2,21 @@
   "template_id": "08_multi_table_dashboard_2col",
   "template_name": "Multi-Table Dashboard 2-Column",
   "version": "1.0",
-
   "canvas": {
     "width": 1920,
     "height": 1080,
     "aspect_ratio": "16:9"
   },
-
   "background": {
     "asset": "bg_01.png",
     "type": "image"
   },
-
   "safe_area": {
     "x": 83,
     "y": 48,
     "width": 1754,
     "height": 984
   },
-
   "regions": {
     "left_column": {
       "type": "container",
@@ -30,13 +26,11 @@
       "y": 75,
       "width": 790,
       "height": 820,
-
       "layout": {
         "type": "vertical_stack",
         "blocks": "dynamic"
       }
     },
-
     "right_column": {
       "type": "container",
       "role": "dashboard_column",
@@ -45,14 +39,12 @@
       "y": 75,
       "width": 780,
       "height": 820,
-
       "layout": {
         "type": "vertical_stack",
         "blocks": "dynamic"
       }
     }
   },
-
   "components": {
     "heading": {
       "type": "text",
@@ -60,47 +52,40 @@
       "allow_wrap": true,
       "maximum_lines": 2
     },
-
     "paragraph": {
       "type": "text",
       "role": "dashboard_paragraph",
       "allow_wrap": true,
       "auto_height": true
     },
-
     "bullet_list": {
       "type": "list",
       "role": "dashboard_bullet_list",
       "items": "dynamic",
       "allow_wrap": true
     },
-
     "table": {
       "type": "table",
       "role": "dashboard_table",
       "rows": "dynamic",
       "columns": "dynamic",
-
       "layout": {
         "auto_row_height": true,
         "auto_column_width": true
       }
     },
-
     "insight": {
       "type": "text",
       "role": "dashboard_insight",
       "allow_wrap": true,
       "auto_height": true
     },
-
     "index_list": {
       "type": "list",
       "role": "section_index_list",
       "item_type": "index_item",
       "items": "dynamic"
     },
-
     "index_item": {
       "type": "component",
       "role": "index_item",
@@ -108,9 +93,6 @@
       "maximum_lines": 2
     }
   },
-
-  "layout": {},
-
   "typography": {
     "heading": {
       "font_size": 22,
@@ -118,7 +100,6 @@
       "maximum_font_size": 24,
       "font_weight": "bold"
     },
-
     "paragraph": {
       "font_size": 20,
       "minimum_font_size": 16,
@@ -126,27 +107,23 @@
       "font_weight": "normal",
       "line_spacing": 1.05
     },
-
     "bullet_list": {
       "font_size": 19,
       "minimum_font_size": 16,
       "maximum_font_size": 20,
       "line_spacing": 1.05
     },
-
     "table_header": {
       "font_size": 19,
       "minimum_font_size": 14,
       "maximum_font_size": 20,
       "font_weight": "bold"
     },
-
     "table_body": {
       "font_size": 18,
       "minimum_font_size": 13,
       "maximum_font_size": 19
     },
-
     "table_total": {
       "font_size": 18,
       "minimum_font_size": 13,
@@ -154,7 +131,6 @@
       "font_weight": "bold"
     }
   },
-
   "spacing": {
     "column_gap": 63,
     "block_gap": 8,
@@ -167,7 +143,6 @@
     "table_to_table": 25,
     "bullet_item_gap": 3
   },
-
   "constraints": {
     "layout": {
       "column_count": 2,
@@ -175,7 +150,6 @@
       "preserve_column_alignment": true,
       "allow_independent_column_height": true
     },
-
     "blocks": {
       "allowed": [
         "heading",
@@ -186,7 +160,6 @@
         "index_list"
       ]
     },
-
     "table": {
       "auto_row_height": true,
       "auto_column_width": true,
@@ -195,21 +168,18 @@
       "minimum_font_size": 13,
       "minimum_row_height": 28
     },
-
     "text": {
       "allow_wrap": true,
       "auto_height": true,
       "prevent_clipping": true,
       "prevent_overlap": true
     },
-
     "bullet_list": {
       "allow_wrap": true,
       "auto_height": true,
       "maximum_item_lines": 2
     }
   },
-
   "overflow": {
     "strategy": [
       "measure_all_blocks",
@@ -220,9 +190,7 @@
       "move_remaining_blocks_to_continuation_slide",
       "create_continuation_slide"
     ],
-
     "continuation_template": "08_multi_table_dashboard_2col",
-
     "never": [
       "crop_text",
       "overlap_blocks",
@@ -231,38 +199,29 @@
       "force_fixed_block_heights"
     ]
   },
-
   "content_model": {
     "type": "multi_table_dashboard_2col",
-
     "required": [
       "columns"
     ],
-
     "properties": {
       "columns": {
         "type": "array",
         "minimum": 1,
         "maximum": 2,
-
         "items": {
           "type": "object",
-
           "required": [
             "blocks"
           ],
-
           "properties": {
             "blocks": {
               "type": "array",
-
               "items": {
                 "type": "object",
-
                 "required": [
                   "type"
                 ],
-
                 "properties": {
                   "type": {
                     "enum": [
@@ -274,15 +233,12 @@
                       "index_list"
                     ]
                   },
-
                   "content": {
                     "type": "string"
                   },
-
                   "items": {
                     "type": "array"
                   },
-
                   "table": {
                     "type": "object"
                   }

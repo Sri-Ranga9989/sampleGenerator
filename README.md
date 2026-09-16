@@ -154,28 +154,69 @@ ppt-generator/
 
 ## Installation & Requirements
 
-- Python 3.10+
-- Dependencies: `python-pptx`, `jsonschema`, `pillow`, `matplotlib` (optional visual diffs), `pytest`
+- Python 3.10+ on Windows / Linux / macOS
+- Core Dependencies: `python-pptx`, `jsonschema`, `pillow`, `numpy`, `pywin32` (for Windows PowerPoint 16.0 COM rasterization)
 
 ```bash
-pip install python-pptx jsonschema pillow pytest
+pip install python-pptx jsonschema pillow numpy pywin32
 ```
 
 ---
 
-## CLI Usage
+## CLI Commands
 
-Generate presentation from report manifest:
+The engine provides unified CLI tools via `python -m ppt_generator`:
+
+### 1. Validate Input JSON Manifest
+Validates input JSON schema (Draft-07) and canonical data model compatibility:
 ```bash
-python -m ppt_generator generate --input examples/report.json --output output/report.pptx
+python -m ppt_generator validate-input --input examples/mining_ugv_report.json
 ```
 
-Validate report payload without generating:
+### 2. Generate Full Presentation (.pptx)
+Executes end-to-end pipeline (layout, measurement, overflow, PPTX construction, structural validation, completeness audit, and slide rasterization):
 ```bash
-python -m ppt_generator validate --input examples/report.json
+python -m ppt_generator generate --input examples/mining_ugv_report.json --output output/mining_ugv_report.pptx
 ```
 
-Render single template with test payload:
+### 3. Validate PPTX Presentation Structure
+Evaluates PPTX shapes, coordinates, boundary overruns, and minimum font thresholds:
 ```bash
-python -m ppt_generator render-template --template-id 06_large_table --input examples/large_table.json --output output/test.pptx
+python -m ppt_generator validate-pptx --input output/mining_ugv_report.pptx
 ```
+
+### 4. Render Single Template Archetype
+Renders a specific slide archetype to an editable PowerPoint presentation:
+```bash
+python -m ppt_generator render-template --template-id 04_table_chart --input examples/mining_ugv_report.json --output output/single_template.pptx
+```
+
+### 5. Compare Rendered Slide Against Ground-Truth Reference
+Compares rendered PNG against reference PNG; returns `SKIPPED` if reference image is absent:
+```bash
+python -m ppt_generator compare --reference assets/templates/mining_ugv/reference/01_cover_title_image.png --generated assets/templates/mining_ugv/rendered/01_cover_title_image.png
+```
+
+---
+
+## Testing & Calibration Suites
+
+### Comprehensive 19 Edge Case Stress Testing
+Verifies row-specific cell expansion, TOC continuation, index list overflow routing, multi-slide table splitting, column width balancing, category density, and font clamps:
+```bash
+python -m unittest tests/test_stress_cases.py
+```
+
+### Individual Template Calibration (Phase 0.5)
+Calibrates all 8 template archetypes with realistic reference data, generates PPTX, performs COM rasterization to 1920×1080 PNG, and runs structural and rendered validation:
+```bash
+python calibration/calibrate_templates.py
+```
+
+---
+
+## Output Artifacts
+
+- **Presentation:** [`output/mining_ugv_report.pptx`](output/mining_ugv_report.pptx) (9 slides, 100% complete)
+- **Rendered High-Res PNGs:** `output/rendered/` (1920×1080 native rasterized slides)
+- **Archetype Calibration Outputs:** `output/calibration/` and `assets/templates/mining_ugv/rendered/`
