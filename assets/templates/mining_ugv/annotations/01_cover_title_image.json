@@ -1,0 +1,37 @@
+{
+  "template_id": "01_cover_title_image",
+  "template_name": "Cover Title with Image",
+  "version": "1.0",
+
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "aspect_ratio": "16:9"
+  },
+
+  "background": {
+    "asset": "",
+    "type": "image"
+  },
+
+  "safe_area": {
+    "x": 0,
+    "y": 0,
+    "width": 0,
+    "height": 0
+  },
+
+  "regions": {},
+
+  "layout": {},
+
+  "typography": {},
+
+  "spacing": {},
+
+  "constraints": {},
+
+  "overflow": {},
+
+  "content_model": {}
+}

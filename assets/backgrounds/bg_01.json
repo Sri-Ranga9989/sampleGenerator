@@ -1,0 +1,60 @@
+{
+  "background_id": "bg_01",
+  "name": "Blue Geometric Right Accent",
+  "version": "1.0",
+
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "aspect_ratio": "16:9"
+  },
+
+  "asset": {
+    "file": "bg_01.png",
+    "format": "png",
+    "role": "background"
+  },
+
+  "regions": {
+    "left_border": {
+      "type": "decorative",
+      "geometry": "fixed",
+      "x": 0,
+      "y": 0,
+      "width": 41,
+      "height": 1080
+    },
+
+    "main_white_area": {
+      "type": "content_background",
+      "geometry": "fixed",
+      "x": 41,
+      "y": 0,
+      "width": 1879,
+      "height": 1080
+    },
+
+    "right_decoration": {
+      "type": "decorative",
+      "geometry": "fixed",
+      "x": 1300,
+      "y": 0,
+      "width": 620,
+      "height": 1080
+    }
+  },
+
+  "content_constraints": {
+    "preferred_content_x": 90,
+    "preferred_content_y": 70,
+    "preferred_content_width": 1250,
+    "preferred_content_height": 940,
+
+    "reserved_right_area": {
+      "x": 1300,
+      "y": 0,
+      "width": 620,
+      "height": 1080
+    }
+  }
+}

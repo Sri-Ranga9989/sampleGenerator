@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "report.schema.json",
+  "title": "Report Manifest Schema",
+  "description": "Validates a full report definition — the ordered list of slides that compose a PowerPoint deck.",
+  "type": "object",
+  "required": ["report_id", "title", "created_at", "template_set", "slides"],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "description": "Unique identifier for this report."
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable report title."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "template_set": {
+      "type": "string",
+      "description": "Name of the template set, e.g. 'mining_ugv'."
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Report-wide defaults for typography, colors, etc.",
+      "properties": {
+        "background": { "type": "string" },
+        "font_family": { "type": "string" },
+        "accent_color": { "type": "string" }
+      }
+    },
+    "slides": {
+      "type": "array",
+      "items": {
+        "$ref": "content.schema.json"
+      },
+      "minItems": 1,
+      "description": "Ordered array of slide content blocks."
+    }
+  },
+  "additionalProperties": false
+}

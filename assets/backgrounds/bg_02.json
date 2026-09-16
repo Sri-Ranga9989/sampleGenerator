@@ -1,0 +1,80 @@
+{
+  "background_id": "bg_02",
+  "name": "Navy Frame with Right Geometric Visual",
+  "version": "1.0",
+
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "aspect_ratio": "16:9"
+  },
+
+  "asset": {
+    "file": "bg_02.png",
+    "format": "png",
+    "role": "background"
+  },
+
+  "regions": {
+    "navy_frame": {
+      "type": "decorative",
+      "geometry": "fixed",
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080,
+      "description": "Dark navy border framing the entire slide"
+    },
+
+    "content_area": {
+      "type": "content_background",
+      "geometry": "fixed",
+      "x": 83,
+      "y": 48,
+      "width": 920,
+      "height": 930,
+      "description": "Primary white/light content area on the left side"
+    },
+
+    "right_visual": {
+      "type": "decorative",
+      "geometry": "fixed",
+      "x": 1015,
+      "y": 0,
+      "width": 905,
+      "height": 930,
+      "description": "Large geometric illustration occupying the right portion"
+    },
+
+    "bottom_reserved": {
+      "type": "decorative",
+      "geometry": "fixed",
+      "x": 83,
+      "y": 930,
+      "width": 1810,
+      "height": 100,
+      "description": "Bottom reserved area below content"
+    }
+  },
+
+  "content_constraints": {
+    "preferred_content_x": 105,
+    "preferred_content_y": 95,
+    "preferred_content_width": 850,
+    "preferred_content_height": 730,
+
+    "reserved_right_area": {
+      "x": 1015,
+      "y": 0,
+      "width": 905,
+      "height": 930
+    },
+
+    "reserved_bottom_area": {
+      "x": 83,
+      "y": 930,
+      "width": 1810,
+      "height": 100
+    }
+  }
+}

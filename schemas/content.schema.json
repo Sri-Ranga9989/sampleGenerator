@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "content.schema.json",
+  "title": "Content Input Schema",
+  "description": "Validates the data payload that populates a single slide. Each content block maps region IDs from the template annotation to actual data.",
+  "type": "object",
+  "required": ["template_id", "slide_index", "data"],
+  "properties": {
+    "template_id": {
+      "type": "string",
+      "description": "Must match a template_id from the annotation registry."
+    },
+    "slide_index": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Zero-based position of this slide in the final deck."
+    },
+    "data": {
+      "type": "object",
+      "description": "Keys are region IDs from the template annotation. Values are the content to render.",
+      "additionalProperties": {
+        "oneOf": [
+          { "$ref": "#/definitions/text_content" },
+          { "$ref": "#/definitions/table_content" },
+          { "$ref": "#/definitions/chart_content" },
+          { "$ref": "#/definitions/image_content" },
+          { "$ref": "#/definitions/bullet_list_content" },
+          { "$ref": "#/definitions/insight_content" }
+        ]
+      }
+    },
+    "overrides": {
+      "type": "object",
+      "description": "Optional per-slide overrides for background, typography, etc."
+    }
+  },
+  "additionalProperties": false,
+
+  "definitions": {
+    "text_content": {
+      "type": "object",
+      "required": ["type", "value"],
+      "properties": {
+        "type":  { "type": "string", "const": "text" },
+        "value": { "type": "string" },
+        "style": { "type": "object", "description": "Optional style overrides." }
+      }
+    },
+    "table_content": {
+      "type": "object",
+      "required": ["type", "headers", "rows"],
+      "properties": {
+        "type":    { "type": "string", "const": "table" },
+        "headers": { "type": "array", "items": { "type": "string" } },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": ["string", "number", "null"] }
+          }
+        },
+        "column_widths": {
+          "type": "array",
+          "items": { "type": "number" },
+          "description": "Optional proportional column widths."
+        },
+        "style": { "type": "object" }
+      }
+    },
+    "chart_content": {
+      "type": "object",
+      "required": ["type", "chart_type", "data"],
+      "properties": {
+        "type":       { "type": "string", "const": "chart" },
+        "chart_type": { "type": "string", "enum": ["bar", "line", "pie", "stacked_bar", "area", "donut"] },
+        "data":       { "type": "object", "description": "Chart data payload." },
+        "options":    { "type": "object", "description": "Chart rendering options." }
+      }
+    },
+    "image_content": {
+      "type": "object",
+      "required": ["type", "src"],
+      "properties": {
+        "type": { "type": "string", "const": "image" },
+        "src":  { "type": "string", "description": "Path or URL to image asset." },
+        "alt":  { "type": "string" },
+        "fit":  { "type": "string", "enum": ["cover", "contain", "fill", "none"] }
+      }
+    },
+    "bullet_list_content": {
+      "type": "object",
+      "required": ["type", "items"],
+      "properties": {
+        "type":  { "type": "string", "const": "bullet_list" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+              "text":  { "type": "string" },
+              "level": { "type": "integer", "minimum": 0, "default": 0 }
+            }
+          }
+        }
+      }
+    },
+    "insight_content": {
+      "type": "object",
+      "required": ["type", "blocks"],
+      "properties": {
+        "type": { "type": "string", "const": "insight" },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "body"],
+            "properties": {
+              "title": { "type": "string" },
+              "body":  { "type": "string" },
+              "icon":  { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "template.schema.json",
+  "title": "Template Annotation Schema",
+  "description": "Validates a single template annotation file used by the PPT generator. All 8 templates share this structure.",
+  "type": "object",
+  "required": [
+    "template_id",
+    "template_name",
+    "version",
+    "canvas",
+    "background",
+    "safe_area",
+    "regions",
+    "layout",
+    "typography",
+    "spacing",
+    "constraints",
+    "overflow",
+    "content_model"
+  ],
+  "properties": {
+    "template_id": {
+      "type": "string",
+      "description": "Unique template identifier, e.g. '01_cover_title_image'."
+    },
+    "template_name": {
+      "type": "string",
+      "description": "Human-readable template name."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Semantic version of this annotation."
+    },
+    "canvas": {
+      "type": "object",
+      "required": ["width", "height", "aspect_ratio"],
+      "properties": {
+        "width":  { "type": "integer", "const": 1920 },
+        "height": { "type": "integer", "const": 1080 },
+        "aspect_ratio": { "type": "string", "const": "16:9" }
+      },
+      "additionalProperties": false
+    },
+    "background": {
+      "type": "object",
+      "required": ["asset", "type"],
+      "properties": {
+        "asset": {
+          "type": "string",
+          "description": "Filename from assets/backgrounds/, e.g. 'bg_01.png'."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["image", "solid", "gradient"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "safe_area": { "$ref": "#/definitions/bbox" },
+    "regions": {
+      "type": "object",
+      "description": "Named regions on the slide. Keys are region IDs.",
+      "additionalProperties": { "$ref": "#/definitions/region" }
+    },
+    "layout": {
+      "type": "object",
+      "description": "Layout rules (grid, columns, alignment). Template-specific."
+    },
+    "typography": {
+      "type": "object",
+      "description": "Font families, weights, sizes per region role."
+    },
+    "spacing": {
+      "type": "object",
+      "description": "Spacing tokens between regions, rows, cells."
+    },
+    "constraints": {
+      "type": "object",
+      "description": "Rendering constraints per region type."
+    },
+    "overflow": {
+      "type": "object",
+      "description": "Overflow / split / continuation rules."
+    },
+    "content_model": {
+      "type": "object",
+      "description": "Describes the expected input data shape for this template."
+    },
+    "components": {
+      "type": "object",
+      "description": "Reusable component definitions (e.g. toc_item, insight_block). Keys are component IDs, values define the component's structure, badge, label, and rendering rules.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "role": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+
+  "definitions": {
+    "bbox": {
+      "type": "object",
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x":      { "type": "number" },
+        "y":      { "type": "number" },
+        "width":  { "type": "number" },
+        "height": { "type": "number" },
+        "confidence": { "$ref": "#/definitions/confidence" }
+      },
+      "additionalProperties": false
+    },
+    "region": {
+      "type": "object",
+      "required": ["type", "role", "x", "y", "width", "height", "geometry"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "subtitle",
+            "image",
+            "table",
+            "chart",
+            "chart_component",
+            "bullet_list",
+            "insight",
+            "column",
+            "container",
+            "footer",
+            "source",
+            "section_label"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "description": "Semantic role, e.g. 'slide_title', 'primary_content'."
+        },
+        "x":      { "type": "number" },
+        "y":      { "type": "number" },
+        "width":  { "type": "number" },
+        "height": { "type": "number" },
+        "geometry": {
+          "type": "string",
+          "enum": ["fixed", "fixed_anchor", "dynamic"]
+        },
+        "confidence": { "$ref": "#/definitions/confidence" },
+        "children": {
+          "type": "object",
+          "description": "Nested sub-regions, if any.",
+          "additionalProperties": { "$ref": "#/definitions/region" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "estimated", "inferred"],
+      "description": "How confident we are about pixel coordinates."
+    }
+  }
+}
