@@ -13,7 +13,7 @@ from layout.table_layout import TableLayoutEngine, TableLayoutResult
 from layout.chart_layout import ChartLayoutEngine, ChartLayoutResult
 from layout.stack_layout import StackLayoutEngine
 from layout.overflow_engine import OverflowEngine
-from models.report_model import Report, Slide, TextBlock, BulletListBlock, TableBlock, ChartBlock, InsightBlock, TOCItem, IndexItem, ImageBlock
+from models.report_model import Report, Slide, SlideData, TextBlock, BulletListBlock, TableBlock, ChartBlock, InsightBlock, TOCItem, IndexItem, ImageBlock
 from config.theme import Theme
 
 
@@ -151,15 +151,21 @@ class TemplateRenderer:
         for idx, it in enumerate(items_raw):
             if isinstance(it, TOCItem):
                 items.append(it)
+            elif isinstance(it, TextBlock):
+                items.append(TOCItem(
+                    id=it.id,
+                    number=str(getattr(it, "number", f"{idx+1:02d}")),
+                    title=it.text
+                ))
             elif isinstance(it, dict):
                 items.append(TOCItem(
-                    id=it.get("id", f"toc_item_{idx+1}"),
+                    id=it.get("id", f"toc_item_{idx+1:02d}"),
                     number=str(it.get("number", f"{idx+1:02d}")),
                     title=str(it.get("title", f"Section {idx+1}"))
                 ))
             else:
                 items.append(TOCItem(
-                    id=f"toc_item_{idx+1}",
+                    id=f"toc_item_{idx+1:02d}",
                     number=f"{idx+1:02d}",
                     title=str(it)
                 ))
@@ -167,6 +173,10 @@ class TemplateRenderer:
         # Check capacity & overflow
         chunks = self.overflow_engine.resolve_toc_overflow(items, column_height=875.0, max_items_per_slide=18)
         results = []
+
+        title_text, title_id = self._extract_text_and_id(
+            slide.data.regions.get("title"), "TABLE OF CONTENTS", f"s{slide.slide_index+1}_title"
+        )
 
         for chunk_idx, chunk_items in enumerate(chunks):
             is_cont = chunk_idx > 0
@@ -176,7 +186,7 @@ class TemplateRenderer:
                 slide_index=slide.slide_index + chunk_idx,
                 template_id="02_toc_image",
                 background=background,
-                title="TABLE OF CONTENTS" if not is_cont else "TABLE OF CONTENTS (CONTINUED)",
+                title=title_text if not is_cont else f"{title_text} (CONTINUED)",
                 overflow_status="CONTINUED" if is_cont else ("SPLIT" if len(chunks) > 1 else "FIT")
             )
 
@@ -191,7 +201,8 @@ class TemplateRenderer:
                 height=t_reg["height"],
                 data=lr.title,
                 font_size=24,
-                style={"bold": True, "color": Theme.PRIMARY_NAVY, "align": "center"}
+                style={"bold": True, "color": Theme.PRIMARY_NAVY, "align": "center"},
+                provenance_id=title_id if not is_cont else f"{title_id}_cont{chunk_idx}"
             ))
 
             # Distribute items into left and right columns
@@ -250,6 +261,12 @@ class TemplateRenderer:
         for idx, it in enumerate(items_raw):
             if isinstance(it, IndexItem):
                 index_items.append(it)
+            elif isinstance(it, TextBlock):
+                index_items.append(IndexItem(
+                    id=it.id,
+                    number=str(getattr(it, "number", f"{idx+1}")),
+                    title=it.text
+                ))
             elif isinstance(it, dict):
                 index_items.append(IndexItem(
                     id=it.get("id", f"idx_{idx+1}"),
@@ -270,7 +287,7 @@ class TemplateRenderer:
 
         # Section title
         t_reg = annotation["regions"]["section_title"]
-        t_meas = fit_text_to_budget(sec_title, t_reg["width"], 150.0, 34, 26)
+        t_meas = fit_text_to_budget(sec_title, t_reg["width"] * 0.90, 150.0, 32, 24)
         lr.components.append(ComponentGeometry(
             component_id="section_title",
             component_type="text",
@@ -288,7 +305,7 @@ class TemplateRenderer:
         idx_reg = annotation["regions"]["index_list"]
         primary_items, overflow_items = self.overflow_engine.resolve_index_overflow(index_items, idx_reg["height"], item_height=38.0)
 
-        curr_y = max(float(idx_reg["y"]), t_reg["y"] + t_meas["height"] + 28.0)
+        curr_y = max(float(idx_reg["y"]), t_reg["y"] + t_meas["height"] + 24.0)
         for it in primary_items:
             lr.components.append(ComponentGeometry(
                 component_id=f"idx_{it.id}",
@@ -411,7 +428,7 @@ class TemplateRenderer:
             ))
 
         # Right column: Section heading
-        sec_heading, sh_id = self._extract_text_and_id(data.get("section_heading"), "Segment Analysis", f"s{slide.slide_index+1}_section_heading")
+        sec_heading, sh_id = self._extract_text_and_id(data.get("section_heading", data.get("heading")), "Segment Analysis", f"s{slide.slide_index+1}_section_heading")
         sh_reg = annotation["regions"]["section_heading"]
         lr.components.append(ComponentGeometry(
             component_id="section_heading",
@@ -467,7 +484,7 @@ class TemplateRenderer:
             ))
 
         # Supporting insight
-        insight_data = data.get("supporting_insight")
+        insight_data = data.get("supporting_insight", data.get("insight"))
         if isinstance(insight_data, InsightBlock):
             ins_reg = annotation["regions"]["supporting_insight"]
             lr.components.append(ComponentGeometry(
@@ -486,7 +503,7 @@ class TemplateRenderer:
     # -------------------------------------------------------------
     # 05_insight_information
     # -------------------------------------------------------------
-    def _layout_05(self, slide: Slide, annotation: Dict[str, Any], background: str) -> List[LayoutResult]:
+    def _layout_05(self, slide: Slide, annotation: Dict[str, Any], background: str, depth: int = 0) -> List[LayoutResult]:
         t_text, t_id = self._extract_text_and_id(slide.data.regions.get("title"), slide.title or "Market Insights & Analysis", f"s{slide.slide_index+1}_title")
         tmpl_id = slide.template_id or "05_insight_information"
         lr = LayoutResult(
@@ -579,10 +596,10 @@ class TemplateRenderer:
         results = [lr]
 
         # Check overflow blocks -> continuation slide
-        if l_res.overflow_blocks or r_res.overflow_blocks:
+        if (l_res.overflow_blocks or r_res.overflow_blocks) and depth < 5:
             lr.overflow_status = "SPLIT"
             cont_slide = Slide(
-                slide_id=f"{slide.slide_id}_cont",
+                slide_id=f"{slide.slide_id}_cont{depth+1}",
                 template_id=tmpl_id,
                 slide_index=slide.slide_index + 1,
                 title=f"{lr.title} (Continued)",
@@ -591,7 +608,7 @@ class TemplateRenderer:
                     right_column_blocks=r_res.overflow_blocks
                 )
             )
-            results.extend(self._layout_05(cont_slide, annotation, background))
+            results.extend(self._layout_05(cont_slide, annotation, background, depth=depth + 1))
 
         return results
 
@@ -606,18 +623,22 @@ class TemplateRenderer:
             rows = slide.data.regions.get("rows", [["A", "B"]])
             tbl_data = TableBlock(id=f"{slide.slide_id}_tbl", headers=headers, rows=[])
 
-        title_text, title_id = self._extract_text_and_id(slide.data.regions.get("table_title"), slide.title or "Comprehensive Data Table", f"s{slide.slide_index+1}_table_title")
+        title_text, title_id = self._extract_text_and_id(slide.data.regions.get("table_title", slide.data.regions.get("title")), slide.title or "Comprehensive Data Table", f"s{slide.slide_index+1}_table_title")
         t_reg = annotation["regions"]["table"]
+
+        t_meas = fit_text_to_budget(title_text, 1700.0, 70.0, 22, 18)
+        tbl_y = max(float(t_reg["y"]), 45.0 + t_meas["height"] + 15.0)
+        avail_h = 990.0 - tbl_y
 
         rows_raw = [[c.value for c in r.cells] for r in tbl_data.rows] if tbl_data.rows else slide.data.regions.get("rows", [])
         tbl_layout = TableLayoutEngine.layout_table(
             headers=tbl_data.headers,
             rows=rows_raw,
             available_width=t_reg["width"],
-            available_height=t_reg["height"],
+            available_height=avail_h,
             preferred_font_size=10,
             minimum_font_size=8,
-            min_row_height=24.0
+            min_row_height=33.0
         )
 
         results = []
@@ -677,7 +698,7 @@ class TemplateRenderer:
     # -------------------------------------------------------------
     def _layout_07(self, slide: Slide, annotation: Dict[str, Any], background: str) -> List[LayoutResult]:
         chart_data = slide.data.regions.get("chart")
-        title_text, title_id = self._extract_text_and_id(slide.data.regions.get("chart_title"), slide.title or "Dominant Market Trends", f"s{slide.slide_index+1}_chart_title")
+        title_text, title_id = self._extract_text_and_id(slide.data.regions.get("chart_title", slide.data.regions.get("title")), slide.title or "Dominant Market Trends", f"s{slide.slide_index+1}_chart_title")
 
         lr = LayoutResult(
             slide_id=slide.slide_id,

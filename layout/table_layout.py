@@ -98,7 +98,7 @@ class TableLayoutEngine:
         available_height: float,
         preferred_font_size: int = 10,
         minimum_font_size: int = 8,
-        min_row_height: float = 24.0,
+        min_row_height: float = 33.0,
         padding_y: float = 8.0,
         font_name: str = "arial",
         min_col_width: float = 60.0

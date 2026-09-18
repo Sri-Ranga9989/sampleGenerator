@@ -105,7 +105,8 @@ class StackLayoutEngine:
 
         for idx, block in enumerate(blocks):
             b_type, b_h, b_fsize, b_id = StackLayoutEngine._measure_block(block, width, font_name)
-            if (curr_y + b_h - start_y) <= available_height + 0.5:
+            can_fit = ((curr_y + b_h - start_y) <= available_height + 0.5) or (len(fitting_blocks) == 0)
+            if can_fit:
                 fitting_blocks.append(StackedBlockLayout(
                     block_id=b_id,
                     block_type=b_type,
@@ -160,9 +161,10 @@ class StackLayoutEngine:
                 available_height=9999.0,
                 preferred_font_size=f_size,
                 minimum_font_size=8,
+                min_row_height=33.0,
                 font_name=font_name
             )
-            return ("table", table_res.total_height + 8.0, f_size, b_id)
+            return ("table", table_res.total_height + 12.0, f_size, b_id)
 
         elif isinstance(block, InsightBlock):
             f_size = 10

@@ -53,7 +53,8 @@ def validate_input_cmd(args):
     except ImportError:
         print("  -> jsonschema package not installed, skipping schema validation")
     except Exception as e:
-        print(f"  -> JSON Schema validation warning: {e}")
+        msg = getattr(e, "message", str(e))
+        print(f"  -> JSON Schema validation warning: {msg}")
 
     # Parse into canonical Report
     try:

@@ -64,6 +64,45 @@ class PowerPointRenderer:
                         "height": comp.height
                     }
 
+                # Record sub-items for compound components
+                if isinstance(comp.data, BulletListBlock):
+                    for item in comp.data.items:
+                        provenance_map[item.id] = {
+                            "slide_index": slide_idx + 1,
+                            "slide_id": lr.slide_id,
+                            "component_id": comp.component_id,
+                            "component_type": "bullet_item",
+                            "x": comp.x, "y": comp.y, "width": comp.width, "height": comp.height
+                        }
+                elif isinstance(comp.data, TableBlock):
+                    for row in comp.data.rows:
+                        provenance_map[row.id] = {
+                            "slide_index": slide_idx + 1,
+                            "slide_id": lr.slide_id,
+                            "component_id": comp.component_id,
+                            "component_type": "table_row",
+                            "x": comp.x, "y": comp.y, "width": comp.width, "height": comp.height
+                        }
+                        for cell in row.cells:
+                            provenance_map[cell.id] = {
+                                "slide_index": slide_idx + 1,
+                                "slide_id": lr.slide_id,
+                                "component_id": comp.component_id,
+                                "component_type": "table_cell",
+                                "x": comp.x, "y": comp.y, "width": comp.width, "height": comp.height
+                            }
+                elif isinstance(comp.data, tuple) and len(comp.data) == 2 and isinstance(comp.data[0], ChartBlock):
+                    chart_blk = comp.data[0]
+                    for cat_idx, cat in enumerate(chart_blk.categories):
+                        cat_id = f"{chart_blk.id}_cat_{cat_idx}"
+                        provenance_map[cat_id] = {
+                            "slide_index": slide_idx + 1,
+                            "slide_id": lr.slide_id,
+                            "component_id": comp.component_id,
+                            "component_type": "chart_category",
+                            "x": comp.x, "y": comp.y, "width": comp.width, "height": comp.height
+                        }
+
         return prs, provenance_map
 
     def _render_component(self, slide, comp: ComponentGeometry):
@@ -145,7 +184,8 @@ class PowerPointRenderer:
                     available_width=comp.width,
                     available_height=comp.height,
                     preferred_font_size=int(comp.font_size or 9),
-                    minimum_font_size=7
+                    minimum_font_size=7,
+                    min_row_height=33.0
                 )
                 TableRenderer.render_table(
                     slide=slide,

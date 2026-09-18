@@ -255,8 +255,21 @@ class ReportParser:
         )
 
     @staticmethod
-    def _parse_content_item(c_dict: Dict[str, Any], base_id: str, all_input_ids: List[str]) -> Any:
-        c_type = c_dict.get("type", "text")
+    def _parse_content_item(c_dict: dict, base_id: str, all_input_ids: list):
+        c_type = c_dict.get("type")
+        if not c_type:
+            if "number" in c_dict and "title" in c_dict:
+                c_type = "index_item" if ("." in str(c_dict.get("number", ""))) else "toc_item"
+            elif "headers" in c_dict and "rows" in c_dict:
+                c_type = "table"
+            elif "series" in c_dict or "chart_type" in c_dict:
+                c_type = "chart"
+            elif "items" in c_dict and isinstance(c_dict.get("items"), list):
+                c_type = "bullet_list"
+            elif "blocks" in c_dict or ("title" in c_dict and "body" in c_dict):
+                c_type = "insight"
+            else:
+                c_type = "text"
         item_id = c_dict.get("id", base_id)
         all_input_ids.append(item_id)
 
@@ -281,14 +294,30 @@ class ReportParser:
             headers = c_dict.get("headers", [])
             rows = []
             for r_idx, r_raw in enumerate(c_dict.get("rows", [])):
-                row_id = f"{item_id}_r{r_idx}"
-                all_input_ids.append(row_id)
-                cells = []
-                for c_idx, cell_val in enumerate(r_raw):
-                    c_id = f"{row_id}_c{c_idx}"
-                    all_input_ids.append(c_id)
-                    cells.append(TableCell(id=c_id, value=cell_val))
-                rows.append(TableRow(id=row_id, cells=cells))
+                if isinstance(r_raw, dict):
+                    row_id = r_raw.get("id", f"{item_id}_r{r_idx}")
+                    all_input_ids.append(row_id)
+                    cells = []
+                    raw_cells = r_raw.get("cells", [])
+                    for c_idx, cell_item in enumerate(raw_cells):
+                        if isinstance(cell_item, dict):
+                            c_id = cell_item.get("id", f"{row_id}_c{c_idx}")
+                            c_val = cell_item.get("value", cell_item.get("text", ""))
+                        else:
+                            c_id = f"{row_id}_c{c_idx}"
+                            c_val = str(cell_item)
+                        all_input_ids.append(c_id)
+                        cells.append(TableCell(id=c_id, value=c_val))
+                    rows.append(TableRow(id=row_id, cells=cells))
+                else:
+                    row_id = f"{item_id}_r{r_idx}"
+                    all_input_ids.append(row_id)
+                    cells = []
+                    for c_idx, cell_val in enumerate(r_raw):
+                        c_id = f"{row_id}_c{c_idx}"
+                        all_input_ids.append(c_id)
+                        cells.append(TableCell(id=c_id, value=cell_val))
+                    rows.append(TableRow(id=row_id, cells=cells))
             return TableBlock(
                 id=item_id,
                 headers=headers,
@@ -318,17 +347,25 @@ class ReportParser:
             )
 
         elif c_type == "insight":
-            blocks = []
-            for b_idx, b in enumerate(c_dict.get("blocks", [])):
-                b_id = b.get("id", f"{item_id}_block_{b_idx}")
-                all_input_ids.append(b_id)
-                blocks.append(InsightBlock(
-                    id=b_id,
-                    title=b.get("title", ""),
-                    body=b.get("body", ""),
-                    icon=b.get("icon")
-                ))
-            return blocks if len(blocks) > 1 else (blocks[0] if blocks else InsightBlock(id=item_id, title="", body=""))
+            if "blocks" in c_dict and isinstance(c_dict.get("blocks"), list):
+                blocks = []
+                for b_idx, b in enumerate(c_dict.get("blocks", [])):
+                    b_id = b.get("id", f"{item_id}_block_{b_idx}")
+                    all_input_ids.append(b_id)
+                    blocks.append(InsightBlock(
+                        id=b_id,
+                        title=b.get("title", ""),
+                        body=b.get("body", b.get("text", "")),
+                        icon=b.get("icon")
+                    ))
+                return blocks if len(blocks) > 1 else (blocks[0] if blocks else InsightBlock(id=item_id, title="", body=""))
+            else:
+                return InsightBlock(
+                    id=item_id,
+                    title=c_dict.get("title", ""),
+                    body=c_dict.get("body", c_dict.get("text", "")),
+                    icon=c_dict.get("icon")
+                )
 
         elif c_type == "image":
             return ImageBlock(
