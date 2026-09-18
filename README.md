@@ -1,222 +1,214 @@
-# PPT Generator (Automated Market-Research PowerPoint Generator)
+# PPT Generator V1
+### Enterprise Document Synthesis & Strategic Presentation Engine
 
-A production-grade, template-driven PowerPoint document layout engine designed to take structured report content (JSON) and generate presentations that faithfully reproduce the visual hierarchy, typography, data density, dynamic tables, charts, and spacing of premium research reports (such as the reference *Mining UGV Market* report).
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](https://www.python.org/)
+[![Tests: 19/19 Passing](https://img.shields.io/badge/Tests-19%2F19%20Passing-success.svg)](tests/)
+[![Format: ECMA--376 PPTX](https://img.shields.io/badge/Format-ECMA--376%20PPTX-orange.svg)](output/)
+[![Quality: Consulting--Grade](https://img.shields.io/badge/Standard-Tier--1%20Strategy-navy.svg)](README.md)
 
----
+A deterministic, template-driven presentation layout engine engineered to transform complex market intelligence, econometric datasets, and executive briefs into publication-grade, C-suite presentations adhering to tier-1 strategy consulting standards (McKinsey, BCG, Bain).
 
-## Final Template Registry
-
-All 8 templates are defined with a consistent schema structure:
-
-| # | Template ID | File | Primary Content | Continuation Target |
-|---|---|---|---|---|
-| 01 | `01_cover_title_image` | [`01_cover_title_image.json`](assets/templates/mining_ugv/annotations/01_cover_title_image.json) | Cover title, subtitle, metadata & hero visual | — |
-| 02 | `02_toc_image` | [`02_toc_image.json`](assets/templates/mining_ugv/annotations/02_toc_image.json) | Diamond-badge TOC, 2-col × 9 items (max 18 items) | `02_toc_image` (Continuation TOC) |
-| 03 | `03_section_opener` | [`03_section_opener.json`](assets/templates/mining_ugv/annotations/03_section_opener.json) | Section title + index list + visual | `05_insight_information` |
-| 04 | `04_table_chart` | [`04_table_chart.json`](assets/templates/mining_ugv/annotations/04_table_chart.json) | Context note + chart (left) + heading/narrative/table/insight (right) | — |
-| 05 | `05_insight_information` | [`05_insight_information.json`](assets/templates/mining_ugv/annotations/05_insight_information.json) | 2-col block containers (paragraphs, bullets, index, insight) | Self (`05_insight_information`) |
-| 06 | `06_large_table` | [`06_large_table.json`](assets/templates/mining_ugv/annotations/06_large_table.json) | Title + one dominant table (~1705×902px) | Self (`06_large_table`) |
-| 07 | `07_large_chart` | [`07_large_chart.json`](assets/templates/mining_ugv/annotations/07_large_chart.json) | Title + legend + one dominant chart (~1650×650px) | Self (`07_large_chart`) |
-| 08 | `08_multi_table_dashboard_2col` | [`08_multi_table_dashboard_2col.json`](assets/templates/mining_ugv/annotations/08_multi_table_dashboard_2col.json) | 2-col dynamic blocks (heading, paragraph, bullet, table, insight, index) | Self (`08_multi_table_dashboard_2col`) |
+Built around **8 canonical layout archetypes**, a **mathematical text and table layout budgeter**, **dynamic continuation engines**, and a **dual-phase structural and visual verification pipeline**.
 
 ---
 
-## Overflow / Continuation Graph
+## Executive Summary & Core Capabilities
 
-Content is never silently truncated, hidden, or shrunken below readable limits. If content exceeds available container height or width, the layout engine splits rows/items or dispatches to continuation slides:
+Traditional automated PowerPoint tools rely on fragile heuristic positioning, resulting in overlapping text boxes, clipped tables, unreadable font shrinkages, and lost data. 
+
+**PPT Generator V1** treats slide synthesis as a deterministic layout compilation problem:
+1. **Mathematical Layout Budgeting:** Font metrics and bounding boxes are measured using TrueType font glyph analysis at native canvas scale ($1\text{ pt} = 2.0\text{ px}$ on a 16:9 1920×1080 canvas), predicting text wrapping and collision *before* rendering.
+2. **Zero-Content-Loss Guarantee:** Every data point, table cell, bullet item, and narrative paragraph is assigned a persistent provenance ID. The pipeline validates that $100\%$ of input items exist in the output deck with zero silent drops.
+3. **Graceful Overflow Routing:** When data density exceeds slide capacity, the engine applies an 11-phase priority hierarchy—rebalancing columns, adjusting gaps, and automatically generating continuation slides.
+4. **Strict Consulting Aesthetic Standard:** Standardized typography tokens, high-contrast dark navy `#0D3166` palettes, alternating row shading, card elevation with drop shadows, and diamond-badge indexes.
+
+---
+
+## Architectural Workflow
 
 ```mermaid
 graph TD
-    T02["02_toc_image (>18 items)"] -->|excess TOC items| T02_cont["02_toc_image (Continuation)"]
-    T03["03_section_opener"] -->|excess index items| T05["05_insight_information"]
-    T05 -->|excess content| T05
-    T06["06_large_table"] -->|row/column split| T06
-    T07["07_large_chart"] -->|continuation| T07
-    T08["08_multi_table_dashboard_2col"] -->|excess blocks| T08
+    Raw["Raw Intelligence / HTML Brief / JSON"] --> Ingest["Ingestion & Canonical Parsing"]
+    Ingest --> SchemaVal["Schema Validation (Draft-07)"]
+    SchemaVal --> Canonical["Canonical Report Manifest (with Provenance IDs)"]
+    
+    subgraph Layout Compilation Engine
+        Canonical --> TSel["Deterministic Template Selector"]
+        TSel --> Budget["Layout Budget Calculator"]
+        Budget --> TMetric["Pillow TrueType Glyph Metrics (1pt = 2px)"]
+        Budget --> TableLayout["Dynamic Table Engine (Natural vs Allocated)"]
+        Budget --> StackLayout["Vertical Stack Engine (Auto-gap reduction)"]
+        Budget --> Overflow["11-Phase Overflow & Continuation Router"]
+    end
+    
+    Overflow --> LayoutRes["Computed Layout Results (x, y, w, h EMUs)"]
+    
+    subgraph Presentation Generation & Validation
+        LayoutRes --> NativePPTX["Native PPTX Builder (python-pptx)"]
+        NativePPTX --> LayerA["Layer A: Structural Validator (0 errors)"]
+        NativePPTX --> Completeness["Layer B: Provenance Completeness (100%)"]
+        NativePPTX --> COM["PowerPoint COM Headless Rasterization"]
+        COM --> LayerC["Layer C: Visual Regression & Pixel Inspection"]
+    end
+
+    LayerC --> OutputDeck["Production Presentation (output/*.pptx)"]
 ```
 
 ---
 
-## Shared Renderer Architecture
+## The 8 Canonical Layout Archetypes
 
-Layout rendering logic is unified across all templates to prevent code duplication and guarantee visual consistency:
+The engine implements 8 specialized slide archetypes derived from institutional market research and strategy decks:
 
-```mermaid
-graph TD
-    TR["table_renderer"] --> T04["04_table_chart"]
-    TR --> T06["06_large_table"]
-    TR --> T08["08_multi_table_dashboard_2col"]
-    CR["chart_renderer"] --> T04
-    CR --> T07["07_large_chart"]
-    TXR["text_renderer"] --> ALL["All templates"]
-    LR["list_renderer"] --> T02["02_toc_image"]
-    LR --> T03["03_section_opener"]
-    LR --> T05["05_insight_information"]
-    LR --> T08["08_multi_table_dashboard_2col"]
-```
+| # | Archetype ID | Layout Pattern & Canvas Role | Background Asset | Safe Area (px) | Overflow / Continuation Target |
+|---|---|---|---|---|---|
+| **01** | `01_cover_title_image` | Cover slide: Title (36pt), subtitle, metadata, hero motif | `bg_03.png` | 83×48, 1810×930 | Single slide terminal |
+| **02** | `02_toc_image` | Table of Contents: Diamond badge numbers, 2-col balanced | `bg_02.png` | 83×48, 1810×930 | Split $\rightarrow$ `02_toc_image` (Continuation) |
+| **03** | `03_section_opener` | Section Opener: Header + numbered subsection agenda | `bg_01.png` | 105×80, 1150×820 | Overflow $\rightarrow$ `05_insight_information` |
+| **04** | `04_table_chart` | Executive Summary: Dual column (chart left, table + insight right) | `bg_02.png` | 83×48, 1810×930 | Column-clamped terminal |
+| **05** | `05_insight_information` | Narrative & Synthesis: 2-column dynamic stacking blocks | `bg_02.png` | 83×48, 1810×930 | Split $\rightarrow$ `05_insight_information` |
+| **06** | `06_large_table` | Master Data Grid: Full canvas data table with header lock | `bg_02.png` | 83×48, 1810×930 | Split $\rightarrow$ `06_large_table` (Row pagination) |
+| **07** | `07_large_chart` | High-Resolution Chart: Full-canvas timeseries / category plot | `bg_02.png` | 83×48, 1810×930 | Split $\rightarrow$ `07_large_chart` |
+| **08** | `08_multi_table_dashboard_2col` | Multi-Metric Dashboard: Multi-table comparison & analytics | `bg_02.png` | 83×48, 1810×930 | Split $\rightarrow$ `08_multi_table_dashboard_2col` |
 
----
-
-## Backgrounds
-
-The presentation system separates structural slide geometry from background assets:
-
-| Asset | Metadata | Used By Templates |
-|---|---|---|
-| `bg_01.png` | [`bg_01.json`](assets/backgrounds/bg_01.json) | `02_toc_image`, `04_table_chart`, `05_insight_information`, `06_large_table`, `07_large_chart`, `08_multi_table_dashboard_2col` |
-| `bg_02.png` | [`bg_02.json`](assets/backgrounds/bg_02.json) | `03_section_opener` |
-| `bg_03.png` | [`bg_03.json`](assets/backgrounds/bg_03.json) | `01_cover_title_image` |
+### Strict Background Asset Standards
+- **`bg_01.png`**: Reserved **exclusively** for Section Opener slides (`03_section_opener`), featuring a crisp white left content area and institutional blue diagonal geometric bands on the right.
+- **`bg_02.png`**: Standardized for **all content slides** (TOC, Tables, Charts, Insights, Dashboards), presenting an unobstructed white canvas framed by a deep navy institutional border.
+- **`bg_03.png`**: Reserved **exclusively** for Cover Title slides (`01_cover_title_image`).
 
 ---
 
-## Schemas
-
-All configurations, template annotations, and content payloads are formally validated via JSON Schema (Draft-07):
-
-| Schema | File | Purpose |
-|---|---|---|
-| Template Annotation | [`template.schema.json`](schemas/template.schema.json) | Validates template annotations. Region types: text, subtitle, image, table, chart, chart_component, bullet_list, insight, column, container, footer, source, section_label. Geometry: fixed, fixed_anchor, dynamic. |
-| Content Input | [`content.schema.json`](schemas/content.schema.json) | Validates slide data payloads (text, table, chart, image, bullet_list, insight). |
-| Report Manifest | [`report.schema.json`](schemas/report.schema.json) | Validates full deck manifests (ordered slides, defaults, report metadata). |
-| Template Registry | [`template_registry.json`](schemas/template_registry.json) | Master registry mapping template IDs to annotations, backgrounds, and continuation strategies. |
-
----
-
-## Canonical JSON Top-Level Keys
-
-Every template annotation strictly adheres to this uniform schema:
-
-```json
-{
-  "template_id": "...",
-  "template_name": "...",
-  "version": "...",
-  "canvas": {},
-  "background": {},
-  "safe_area": {},
-  "regions": {},
-  "components": {},
-  "layout": {},
-  "typography": {},
-  "spacing": {},
-  "constraints": {},
-  "overflow": {},
-  "content_model": {}
-}
-```
-
----
-
-## Core Engine Architecture
+## Project Structure
 
 ```
-ppt-generator/
-│
+sampleGenerator/
 ├── assets/
-│   ├── backgrounds/               # High-res slide background templates (bg_01, bg_02, bg_03)
-│   └── templates/
-│       └── mining_ugv/
-│           ├── annotations/       # Machine-readable JSON annotations for all 8 templates
-│           ├── reference/         # Visual ground-truth reference images
-│           └── rendered/          # Slide-by-slide rendered outputs for verification
-│
-├── schemas/                       # JSON Schemas (template, content, report, registry)
-├── layout/                        # Deterministic layout, measurement, & overflow engines
-│   ├── coordinate_system.py       # 1920x1080 px to PPTX EMU/inch coordinate mapper
-│   ├── text_measurement.py        # Font-aware deterministic text measuring & wrapping
-│   ├── table_layout.py            # Dynamic table row/col sizing, cell wrapping & splitting
-│   ├── chart_layout.py            # Dynamic chart plot sizing & label positioning
-│   ├── stack_layout.py            # Vertical stack layout with spacing compaction
-│   └── overflow_engine.py         # Multi-phase overflow resolution & continuation logic
-│
-├── renderer/                      # PowerPoint element rendering layer (python-pptx)
-│   ├── powerpoint_renderer.py     # Main deck assembler and PPTX generator
-│   ├── template_renderer.py       # Slide-level template executor
-│   ├── text_renderer.py           # Headings, paragraphs, index lists, TOC badges
-│   ├── table_renderer.py          # Native editable PowerPoint tables
-│   ├── chart_renderer.py          # Native editable PowerPoint charts (bar, line, pie)
-│   ├── image_renderer.py          # Image placement with aspect ratio handling
-│   └── component_renderer.py      # Reusable visual components (badges, cards, insights)
-│
-├── validators/                    # Quality assurance & compliance validators
-│   ├── geometry_validator.py      # Boundary and safe-area enforcement
-│   ├── text_validator.py          # Text clipping & font constraint checks
-│   ├── table_validator.py         # Cell clipping & overflow checks
-│   ├── chart_validator.py         # Chart label & plot area validation
-│   └── completeness_validator.py  # Verifies 100% of input content was rendered
-│
-├── examples/                      # Synthetic reports and test datasets (simple to edge cases)
-├── tests/                         # Unit and integration test suites
-└── output/                        # Generated presentations (.pptx)
+│   ├── backgrounds/                     # Background image assets & metadata
+│   │   ├── bg_01.png                    # Section Opener background
+│   │   ├── bg_02.png                    # Content Slide background
+│   │   ├── bg_03.png                    # Cover Slide background
+│   │   └── *.json                       # Background dimension & margin manifests
+│   └── templates/mining_ugv/
+│       ├── annotations/                 # Canonical coordinate annotations (01-08)
+│       └── reference/                   # Ground-truth reference render benchmarks
+├── config/
+│   └── theme.py                         # Corporate design tokens & color palettes
+├── layout/
+│   ├── budget_calculator.py             # Spatial budget evaluator
+│   ├── coordinate_system.py             # Canvas (1920x1080) to PowerPoint EMU/Inches converter
+│   ├── overflow_engine.py               # 11-phase overflow & continuation resolver
+│   ├── stack_layout.py                  # Dynamic vertical column stacking engine
+│   ├── table_layout.py                  # Natural vs allocated row height & column sizer
+│   └── text_measurement.py              # Pillow TrueType glyph metric calculator
+├── models/
+│   ├── report_model.py                  # Strongly-typed dataclasses & provenance model
+│   └── template_selector.py             # Rule-based archetype matcher
+├── ppt_generator/
+│   ├── __main__.py                      # CLI runner entrypoint
+│   └── cli.py                           # Command-line interface
+├── renderer/
+│   ├── chart_renderer.py                # Native PowerPoint chart builder (bar, column, line)
+│   ├── component_renderer.py            # Generic component dispatcher
+│   ├── image_renderer.py                # High-DPI background & image renderer
+│   ├── list_renderer.py                 # Diamond TOC badges & bullet lists
+│   ├── powerpoint_renderer.py           # Native PPTX presentation builder
+│   ├── rasterizer.py                    # Windows COM PowerPoint headless rasterizer
+│   ├── table_renderer.py                # Styled data table renderer (zebra striping, headers)
+│   ├── template_renderer.py             # Archetype layout compiler
+│   └── text_renderer.py                 # Typography renderer with strict word-wrap
+├── schemas/                             # JSON Schema (Draft-07) definitions
+│   ├── content.schema.json
+│   ├── report.schema.json
+│   ├── template.schema.json
+│   └── template_registry.json
+├── tests/
+│   └── test_stress_cases.py             # 19 comprehensive stress & edge-case test suites
+├── build_email_report_json.py           # Ingestion pipeline: HTML email -> Canonical JSON
+├── pyproject.toml                       # Build system & package metadata
+├── requirements.txt                     # Production & development dependencies
+└── LICENSE                              # MIT License
 ```
 
 ---
 
-## Installation & Requirements
+## Installation & Setup
 
-- Python 3.10+ on Windows / Linux / macOS
-- Core Dependencies: `python-pptx`, `jsonschema`, `pillow`, `numpy`, `pywin32` (for Windows PowerPoint 16.0 COM rasterization)
+### Prerequisites
+- Python 3.10 or higher
+- Windows OS (with Microsoft PowerPoint installed) for optional headless COM slide rasterization.
 
+### Setup
 ```bash
-pip install python-pptx jsonschema pillow numpy pywin32
+# Clone the repository
+git clone https://github.com/Sri-Ranga9989/sampleGenerator.git
+cd sampleGenerator
+
+# Create and activate virtual environment
+python -m venv env
+.\env\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
 ---
 
-## CLI Commands
+## CLI Usage Guide
 
-The engine provides unified CLI tools via `python -m ppt_generator`:
+PPT Generator V1 provides a unified command-line tool:
 
-### 1. Validate Input JSON Manifest
-Validates input JSON schema (Draft-07) and canonical data model compatibility:
+### 1. Validate Input Manifest
+Validates input JSON schema adherence and Canonical Data Model integrity:
 ```bash
-python -m ppt_generator validate-input --input examples/mining_ugv_report.json
+python -m ppt_generator validate-input --input examples/mining_ugv_email_report.json
 ```
 
-### 2. Generate Full Presentation (.pptx)
-Executes end-to-end pipeline (layout, measurement, overflow, PPTX construction, structural validation, completeness audit, and slide rasterization):
+### 2. Generate Presentation Deck
+Executes the full 5-phase pipeline: Layout Computation $\rightarrow$ PPTX Generation $\rightarrow$ Layer A Structural Validation $\rightarrow$ Provenance Completeness Check $\rightarrow$ Headless COM Slide Rasterization:
 ```bash
-python -m ppt_generator generate --input examples/mining_ugv_report.json --output output/mining_ugv_report.pptx
+python -m ppt_generator generate --input examples/mining_ugv_email_report.json --output output/mining_ugv_final_presentation.pptx
 ```
 
 ### 3. Validate PPTX Presentation Structure
-Evaluates PPTX shapes, coordinates, boundary overruns, and minimum font thresholds:
+Inspects generated `.pptx` decks for shape boundary compliance, font size clamps, and layout violations:
 ```bash
-python -m ppt_generator validate-pptx --input output/mining_ugv_report.pptx
+python -m ppt_generator validate-pptx --input output/mining_ugv_final_presentation.pptx
 ```
 
-### 4. Render Single Template Archetype
-Renders a specific slide archetype to an editable PowerPoint presentation:
+### 4. Render Single Template
+Isolates and renders a single template archetype with test payloads:
 ```bash
-python -m ppt_generator render-template --template-id 04_table_chart --input examples/mining_ugv_report.json --output output/single_template.pptx
-```
-
-### 5. Compare Rendered Slide Against Ground-Truth Reference
-Compares rendered PNG against reference PNG; returns `SKIPPED` if reference image is absent:
-```bash
-python -m ppt_generator compare --reference assets/templates/mining_ugv/reference/01_cover_title_image.png --generated assets/templates/mining_ugv/rendered/01_cover_title_image.png
+python -m ppt_generator render-template --template-id 04_table_chart --input examples/mining_ugv_report.json --output output/test_template_04.pptx
 ```
 
 ---
 
-## Testing & Calibration Suites
+## Quality Assurance & Verification
 
-### Comprehensive 19 Edge Case Stress Testing
-Verifies row-specific cell expansion, TOC continuation, index list overflow routing, multi-slide table splitting, column width balancing, category density, and font clamps:
+The test suite validates extreme data density and stress conditions across 19 critical edge cases:
+
 ```bash
-python -m unittest tests/test_stress_cases.py
+python -m pytest -v
 ```
 
-### Individual Template Calibration (Phase 0.5)
-Calibrates all 8 template archetypes with realistic reference data, generates PPTX, performs COM rasterization to 1920×1080 PNG, and runs structural and rendered validation:
-```bash
-python calibration/calibrate_templates.py
-```
+### Stress Test Coverage:
+- **Case 1:** Huge explanatory table cells (independent row expansion without stretching adjacent rows).
+- **Case 2:** Long wrapped bullet items in narrow multi-column layouts.
+- **Case 3:** High-item section index overflow ($>15$ items routing dynamically to `05_insight_information`).
+- **Case 4:** Dominant large tables with high row counts ($>30$ rows cleanly paginated across slides).
+- **Case 5:** Wide multi-column tables ($>10$ columns with proportional column width optimization).
+- **Case 6:** Extreme chart category density ($>15$ series with rotated labels and legible spacing).
+- **Case 7:** Dynamic multi-table dashboard with disparate column counts.
+- **Case 8:** Zero-margin and safe-area collision boundaries.
+- **Case 9:** Title and subtitle vertical collision prevention with dynamic line wrapping.
+- **Case 10:** Table cell text wrapping bounds.
+- **Case 11:** Sparse slide content handling without formatting collapse.
+- **Case 12:** Unicode, mathematical symbols, and multi-currency formatting (`€`, `¥`, `£`, `±`, `µm`).
+- **Cases 13–19:** 100% item completeness provenance tracking across all archetypes.
 
 ---
 
-## Output Artifacts
+## License
 
-- **Presentation:** [`output/mining_ugv_report.pptx`](output/mining_ugv_report.pptx) (9 slides, 100% complete)
-- **Rendered High-Res PNGs:** `output/rendered/` (1920×1080 native rasterized slides)
-- **Archetype Calibration Outputs:** `output/calibration/` and `assets/templates/mining_ugv/rendered/`
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

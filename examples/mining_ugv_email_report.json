@@ -1,0 +1,2176 @@
+{
+  "report_id": "rep_mining_ugv_email_2026",
+  "title": "Mining Underground Ground Vehicles (UGV) Market",
+  "created_at": "2026-09-18T12:00:00Z",
+  "template_set": "mining_ugv",
+  "defaults": {
+    "background": "bg_02.png",
+    "font_family": "Arial",
+    "accent_color": "#1B365D"
+  },
+  "slides": [
+    {
+      "template_id": "01_cover_title_image",
+      "slide_index": 0,
+      "data": {
+        "title": {
+          "type": "text",
+          "id": "cov_title",
+          "value": "Mining Underground Ground Vehicles (UGV) Market"
+        },
+        "subtitle": {
+          "type": "text",
+          "id": "cov_sub",
+          "value": "Global Fleet Sizing, Autonomous Navigation & Commercial Forecast 2020-2030F"
+        },
+        "metadata": {
+          "type": "text",
+          "id": "cov_meta",
+          "value": "Industry Intelligence Report | Source: Comprehensive Mining Research | September 2026"
+        }
+      }
+    },
+    {
+      "template_id": "02_toc_image",
+      "slide_index": 1,
+      "data": {
+        "items": [
+          {
+            "type": "toc_item",
+            "id": "toc_01",
+            "number": "01",
+            "title": "Executive Summary & Strategic Findings"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_02",
+            "number": "02",
+            "title": "Market Scope, Definitions & Taxonomy"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_03",
+            "number": "03",
+            "title": "Historical Market Sizing (2020-2030F)"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_04",
+            "number": "04",
+            "title": "Market Structure & Core Segmentation"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_05",
+            "number": "05",
+            "title": "Installed Base & Replacement Cycles"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_06",
+            "number": "06",
+            "title": "Technology, Sensor Fusion & SLAM"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_07",
+            "number": "07",
+            "title": "Application & End-User Intelligence"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_08",
+            "number": "08",
+            "title": "Buyer Decision-Making Intelligence"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_09",
+            "number": "09",
+            "title": "Customer Requirements & Specifications"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_10",
+            "number": "10",
+            "title": "Voice of Customer & Pain Points"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_11",
+            "number": "11",
+            "title": "Pricing, Transaction & Negotiation"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_12",
+            "number": "12",
+            "title": "Purchase Intent & Budget Allocation"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_13",
+            "number": "13",
+            "title": "Technology Adoption & Trial Pipeline"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_14",
+            "number": "14",
+            "title": "Regional Intelligence: Europe & Germany"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_15",
+            "number": "15",
+            "title": "Value Chain & Ecosystem Analysis"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_16",
+            "number": "16",
+            "title": "Customer-Validated White-Space Matrix"
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_17",
+            "number": "17",
+            "title": "Company Benchmarking: Komatsu Ltd."
+          },
+          {
+            "type": "toc_item",
+            "id": "toc_18",
+            "number": "18",
+            "title": "Strategic Recommendations & 2030 Roadmap"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 2,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s1_title",
+          "value": "1. Executive Summary & Strategic Findings"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_1_1",
+            "number": "1.1",
+            "title": "Market Snapshot & Growth Trajectory"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_1_2",
+            "number": "1.2",
+            "title": "Demand & Near-Term Purchase Pipeline"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_1_3",
+            "number": "1.3",
+            "title": "Application Demand & Fleet Economics"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_1_4",
+            "number": "1.4",
+            "title": "Critical Buyer Specifications & Thresholds"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_1_5",
+            "number": "1.5",
+            "title": "Core Technology Adoption Dynamics"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_1_6",
+            "number": "1.6",
+            "title": "Strategic Market Opportunities & White-Space"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "04_table_chart",
+      "slide_index": 3,
+      "data": {
+        "context_note": {
+          "type": "text",
+          "id": "s4_note",
+          "value": "Comprehensive market valuation and fleet growth across forecast horizons (2025-2030F)"
+        },
+        "chart": {
+          "type": "chart",
+          "id": "ch_s4_val",
+          "chart_type": "bar",
+          "title": "Mining UGV Market Value ($M) & Annual Deployments (Units)",
+          "data": {
+            "categories": [
+              "2025",
+              "2026E",
+              "2030F"
+            ],
+            "series": [
+              {
+                "name": "Market Value Midpoint ($M)",
+                "values": [
+                  220,
+                  270,
+                  650
+                ]
+              },
+              {
+                "name": "Deployments Midpoint (Units)",
+                "values": [
+                  1350,
+                  1750,
+                  4500
+                ]
+              }
+            ]
+          }
+        },
+        "section_heading": {
+          "type": "text",
+          "id": "s4_head",
+          "value": "Market Acceleration & Underground Share"
+        },
+        "narrative": {
+          "type": "text",
+          "id": "s4_narr",
+          "value": "Underground operations account for 60-72% of total UGV demand, expanding at an 18-23% CAGR. Market value is projected to reach $520-780M by 2030 as operators transition from single-vehicle trials to multi-unit fleet production."
+        },
+        "table": {
+          "type": "table",
+          "id": "tbl_s4_snap",
+          "headers": [
+            "Metric",
+            "2025",
+            "2026E",
+            "2030F"
+          ],
+          "rows": [
+            [
+              "Market value",
+              "USD 180-260M",
+              "USD 220-320M",
+              "USD 520-780M"
+            ],
+            [
+              "Unit deployments",
+              "1,100-1,600",
+              "1,400-2,100",
+              "3,500-5,500"
+            ],
+            [
+              "Installed base",
+              "4,000-6,000",
+              "5,000-7,500",
+              "12,000-18,000"
+            ],
+            [
+              "Average system ASP",
+              "USD 140K-220K",
+              "USD 140K-225K",
+              "USD 120K-200K"
+            ]
+          ]
+        },
+        "supporting_insight": {
+          "type": "insight",
+          "id": "ins_s4_snap",
+          "blocks": [
+            {
+              "id": "ins_s4_snap_b",
+              "title": "Worker Safety Driving CAPEX Budgets",
+              "body": "Worker exposure reduction ranks as the #1 purchase trigger (18-24% weighting), far exceeding initial equipment price (4-7%), compelling rapid fleet automation in hazardous stopes."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "template_id": "05_insight_information",
+      "slide_index": 4,
+      "data": {
+        "title": {
+          "type": "text",
+          "id": "s5_title",
+          "value": "Strategic Market Findings & Structural Buyer Dynamics"
+        },
+        "left_column": [
+          {
+            "type": "text",
+            "id": "s5_l_h",
+            "value": "Key Commercial Transition Vectors",
+            "role": "heading"
+          },
+          {
+            "type": "text",
+            "id": "s5_l_p",
+            "value": "Underground mining represents the primary near-term commercial market. While inspection and mapping are the dominant initial entry points, safety, hazardous-area intervention, and production-support systems are expanding at the fastest CAGR."
+          },
+          {
+            "type": "bullet_list",
+            "id": "s5_l_b",
+            "items": [
+              {
+                "id": "s5_l_b_1",
+                "text": "Pilot conversion is the principal bottleneck: 35-55% of mine pilots convert to commercial contracts."
+              },
+              {
+                "id": "s5_l_b_2",
+                "text": "Retrofit autonomy kits offer a faster, lower-CAPEX route than complete machinery replacement."
+              },
+              {
+                "id": "s5_l_b_3",
+                "text": "Multi-unit fleet deployments (10-50+ units) trigger massive operational economies of scale."
+              }
+            ]
+          }
+        ],
+        "right_column": [
+          {
+            "type": "text",
+            "id": "s5_r_h",
+            "value": "Value Shift: Hardware to Software & AI",
+            "role": "heading"
+          },
+          {
+            "type": "text",
+            "id": "s5_r_p",
+            "value": "Technology differentiation is decisively shifting away from vehicle chassis mechanics toward GNSS-denied autonomy, multi-sensor fusion, edge AI inference, and deep integration with mine management systems."
+          },
+          {
+            "type": "insight",
+            "id": "s5_r_ins",
+            "blocks": [
+              {
+                "id": "s5_r_ins_b",
+                "title": "Expanded Revenue Beyond Hardware",
+                "body": "Software licenses, sensor payloads, communications infrastructure, and centralized fleet management software expand total deployment revenue by 30-50% over bare vehicle hardware."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 5,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s6_title",
+          "value": "3. Historical Development & Market Sizing (2020-2030F)"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_3_1",
+            "number": "3.1",
+            "title": "Historical Market Value & Annual Deployments"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_3_2",
+            "number": "3.2",
+            "title": "Installed Fleet Expansion (2,400 to 18,000 Units)"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_3_3",
+            "number": "3.3",
+            "title": "System ASP Compression & Pricing Trends"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_3_4",
+            "number": "3.4",
+            "title": "New Deployments vs Retrofit Share Evolution"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_3_5",
+            "number": "3.5",
+            "title": "Shift from Pilot Programs to Commercial Fleets"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "06_large_table",
+      "slide_index": 6,
+      "data": {
+        "table_title": {
+          "type": "text",
+          "id": "s7_title",
+          "value": "Table 3.1: Historical Market Development & Fleet Sizing (2020-2030F)"
+        },
+        "table": {
+          "type": "table",
+          "id": "tbl_s7_hist",
+          "headers": [
+            "Metric",
+            "2020",
+            "2021",
+            "2022",
+            "2023",
+            "2024",
+            "2025",
+            "2026E",
+            "2030F"
+          ],
+          "rows": [
+            [
+              "Global market value (USD M)",
+              "105-145",
+              "115-160",
+              "125-175",
+              "140-195",
+              "155-225",
+              "180-260",
+              "220-320",
+              "520-780"
+            ],
+            [
+              "Annual UGV deployments (units)",
+              "650-950",
+              "700-1,050",
+              "780-1,150",
+              "850-1,250",
+              "950-1,400",
+              "1,100-1,600",
+              "1,400-2,100",
+              "3,500-5,500"
+            ],
+            [
+              "Installed fleet (units)",
+              "2,400-3,500",
+              "2,700-4,000",
+              "3,000-4,500",
+              "3,300-4,900",
+              "3,600-5,400",
+              "4,000-6,000",
+              "5,000-7,500",
+              "12,000-18,000"
+            ],
+            [
+              "Average system ASP (USD K)",
+              "145-205",
+              "145-210",
+              "145-215",
+              "145-220",
+              "145-220",
+              "140-220",
+              "140-225",
+              "120-200"
+            ],
+            [
+              "Annual market growth",
+              "-",
+              "7-10%",
+              "8-10%",
+              "10-13%",
+              "11-16%",
+              "14-20%",
+              "18-25%",
+              "18-23% CAGR"
+            ],
+            [
+              "New deployment share",
+              "55-65%",
+              "55-65%",
+              "55-65%",
+              "55-65%",
+              "55-65%",
+              "55-65%",
+              "60-70%",
+              "65-75%"
+            ],
+            [
+              "Retrofit / upgrade share",
+              "15-20%",
+              "15-20%",
+              "16-21%",
+              "17-22%",
+              "18-24%",
+              "20-25%",
+              "22-28%",
+              "25-32%"
+            ],
+            [
+              "Pilot / POC share of deployments",
+              "25-35%",
+              "25-35%",
+              "25-34%",
+              "23-32%",
+              "22-30%",
+              "20-28%",
+              "18-25%",
+              "10-18%"
+            ],
+            [
+              "Commercial production share",
+              "30-40%",
+              "32-42%",
+              "34-44%",
+              "36-46%",
+              "38-48%",
+              "40-50%",
+              "45-55%",
+              "60-70%"
+            ],
+            [
+              "Underground share",
+              "52-60%",
+              "53-61%",
+              "54-62%",
+              "55-64%",
+              "57-66%",
+              "60-68%",
+              "62-70%",
+              "65-72%"
+            ],
+            [
+              "Inspection / mapping share",
+              "45-55%",
+              "44-54%",
+              "43-53%",
+              "42-51%",
+              "40-49%",
+              "35-45%",
+              "32-42%",
+              "25-35%"
+            ],
+            [
+              "Autonomous / semi-autonomous share",
+              "25-35%",
+              "28-38%",
+              "31-41%",
+              "34-44%",
+              "38-48%",
+              "42-52%",
+              "48-58%",
+              "65-80%"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "template_id": "07_large_chart",
+      "slide_index": 7,
+      "data": {
+        "chart_title": {
+          "type": "text",
+          "id": "s8_title",
+          "value": "Mining UGV Market Trajectory & Fleet Installed Base (2020-2030F)"
+        },
+        "chart": {
+          "type": "chart",
+          "id": "ch_s8_traj",
+          "chart_type": "line",
+          "title": "Global Market Valuation ($M), Annual Shipments (x10), and Installed Base (x100)",
+          "data": {
+            "categories": [
+              "2020",
+              "2021",
+              "2022",
+              "2023",
+              "2024",
+              "2025",
+              "2026E",
+              "2030F"
+            ],
+            "series": [
+              {
+                "name": "Market Value Midpoint ($M)",
+                "values": [
+                  125,
+                  137,
+                  150,
+                  167,
+                  190,
+                  220,
+                  270,
+                  650
+                ]
+              },
+              {
+                "name": "Annual Deployments (x10 Units)",
+                "values": [
+                  80,
+                  87,
+                  96,
+                  105,
+                  117,
+                  135,
+                  175,
+                  450
+                ]
+              },
+              {
+                "name": "Installed Fleet Base (x100 Units)",
+                "values": [
+                  29,
+                  33,
+                  37,
+                  41,
+                  45,
+                  50,
+                  62,
+                  150
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 8,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s9_title",
+          "value": "4. Market Structure & Core Segmentation Analysis"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_4_1",
+            "number": "4.1",
+            "title": "UGV Type: Inspection, Mapping & Heavy Transport"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_4_2",
+            "number": "4.2",
+            "title": "Autonomy Levels: Teleoperation to Full Autonomy"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_4_3",
+            "number": "4.3",
+            "title": "Platform Sizing & Weight Distribution"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_4_4",
+            "number": "4.4",
+            "title": "Payload Capacity & System ASP Benchmarking"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_4_5",
+            "number": "4.5",
+            "title": "Propulsion: Wheeled, Tracked & Legged Robotics"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "06_large_table",
+      "slide_index": 9,
+      "data": {
+        "table_title": {
+          "type": "text",
+          "id": "s10_title",
+          "value": "Table 4.1: Mining UGV Market Structure & Core Segmentation (2025)"
+        },
+        "table": {
+          "type": "table",
+          "id": "tbl_s10_struct",
+          "headers": [
+            "Segmentation Dimension",
+            "Segment",
+            "2025 Market Share",
+            "2025 Market Value (USD M)",
+            "2025 Units",
+            "ASP (USD K)"
+          ],
+          "rows": [
+            [
+              "UGV Type",
+              "Inspection UGV",
+              "25-30%",
+              "45-75",
+              "300-450",
+              "120-180"
+            ],
+            [
+              "UGV Type",
+              "Mapping / Survey UGV",
+              "15-20%",
+              "27-52",
+              "180-300",
+              "120-175"
+            ],
+            [
+              "UGV Type",
+              "Safety / Rescue UGV",
+              "10-15%",
+              "18-39",
+              "100-200",
+              "150-250"
+            ],
+            [
+              "UGV Type",
+              "Environmental Monitoring UGV",
+              "8-12%",
+              "14-31",
+              "80-160",
+              "120-220"
+            ],
+            [
+              "UGV Type",
+              "Equipment / Infrastructure UGV",
+              "10-15%",
+              "18-39",
+              "100-220",
+              "130-220"
+            ],
+            [
+              "UGV Type",
+              "Material Transport / Heavy UGV",
+              "12-18%",
+              "22-47",
+              "100-180",
+              "200-350"
+            ],
+            [
+              "UGV Type",
+              "Other Specialized UGVs",
+              "5-10%",
+              "9-26",
+              "50-120",
+              "150-300"
+            ],
+            [
+              "Autonomy Level",
+              "Teleoperated / Remote",
+              "20-30%",
+              "36-78",
+              "250-450",
+              "100-180"
+            ],
+            [
+              "Autonomy Level",
+              "Assisted / Semi-Autonomous",
+              "35-45%",
+              "63-117",
+              "400-700",
+              "130-210"
+            ],
+            [
+              "Autonomy Level",
+              "Highly Autonomous",
+              "20-30%",
+              "36-78",
+              "200-400",
+              "160-280"
+            ],
+            [
+              "Autonomy Level",
+              "Fully Autonomous",
+              "5-10%",
+              "9-26",
+              "40-120",
+              "200-350"
+            ],
+            [
+              "Platform Size",
+              "Micro / Compact",
+              "10-15%",
+              "18-39",
+              "180-300",
+              "60-130"
+            ],
+            [
+              "Platform Size",
+              "Small",
+              "20-30%",
+              "36-78",
+              "250-450",
+              "100-180"
+            ],
+            [
+              "Platform Size",
+              "Medium",
+              "35-45%",
+              "63-117",
+              "350-600",
+              "150-250"
+            ],
+            [
+              "Platform Size",
+              "Large / Heavy",
+              "20-30%",
+              "36-78",
+              "150-300",
+              "250-500"
+            ],
+            [
+              "Payload",
+              "<10 kg",
+              "10-15%",
+              "18-39",
+              "180-300",
+              "60-130"
+            ],
+            [
+              "Payload",
+              "10-50 kg",
+              "20-30%",
+              "36-78",
+              "250-450",
+              "100-180"
+            ],
+            [
+              "Payload",
+              "50-250 kg",
+              "35-45%",
+              "63-117",
+              "350-600",
+              "150-280"
+            ],
+            [
+              "Payload",
+              "250-1,000 kg",
+              "10-15%",
+              "18-39",
+              "80-180",
+              "250-450"
+            ],
+            [
+              "Payload",
+              ">1,000 kg",
+              "5-10%",
+              "9-26",
+              "30-100",
+              "300-750+"
+            ],
+            [
+              "Propulsion",
+              "Wheeled",
+              "50-60%",
+              "90-156",
+              "600-900",
+              "120-220"
+            ],
+            [
+              "Propulsion",
+              "Tracked",
+              "30-40%",
+              "54-104",
+              "350-600",
+              "140-280"
+            ],
+            [
+              "Propulsion",
+              "Legged / Hybrid",
+              "5-10%",
+              "9-26",
+              "50-120",
+              "180-400"
+            ],
+            [
+              "Power Source",
+              "Lithium-Ion Battery",
+              "65-75%",
+              "117-195",
+              "750-1,150",
+              "130-220"
+            ],
+            [
+              "Power Source",
+              "Lead-Acid / Other Battery",
+              "10-15%",
+              "18-39",
+              "120-220",
+              "100-180"
+            ],
+            [
+              "Power Source",
+              "Hybrid / Fuel-Based",
+              "8-15%",
+              "14-39",
+              "70-180",
+              "180-350"
+            ],
+            [
+              "Power Source",
+              "Tethered / External Power",
+              "3-8%",
+              "5-21",
+              "30-100",
+              "150-300"
+            ],
+            [
+              "Mining Environment",
+              "Underground",
+              "60-68%",
+              "108-177",
+              "700-1,100",
+              "140-230"
+            ],
+            [
+              "Mining Environment",
+              "Open-Pit",
+              "22-28%",
+              "40-73",
+              "250-450",
+              "140-220"
+            ],
+            [
+              "Mining Environment",
+              "Quarry / Other",
+              "8-12%",
+              "14-31",
+              "100-200",
+              "100-180"
+            ],
+            [
+              "Commercial Status",
+              "POC / Evaluation",
+              "20-28%",
+              "36-73",
+              "250-450",
+              "100-180"
+            ],
+            [
+              "Commercial Status",
+              "Pilot Deployment",
+              "20-25%",
+              "36-65",
+              "200-350",
+              "130-220"
+            ],
+            [
+              "Commercial Status",
+              "Commercial Deployment",
+              "40-50%",
+              "72-130",
+              "450-750",
+              "150-250"
+            ],
+            [
+              "Commercial Status",
+              "Fleet / Multi-Site",
+              "8-15%",
+              "14-39",
+              "80-180",
+              "200-350"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 10,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s11_title",
+          "value": "8. Application & End-User Intelligence"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_8_1",
+            "number": "8.1",
+            "title": "Mine Inspection & 3D Mapping Operations"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_8_2",
+            "number": "8.2",
+            "title": "Hazardous Area & Safety Inspection Demand"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_8_3",
+            "number": "8.3",
+            "title": "Material Transport & Autonomous Haulage"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_8_4",
+            "number": "8.4",
+            "title": "End-User Fleet Economics & Budget Thresholds"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_8_5",
+            "number": "8.5",
+            "title": "Mining Contractors vs Mine Owners Adoption"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "04_table_chart",
+      "slide_index": 11,
+      "data": {
+        "context_note": {
+          "type": "text",
+          "id": "s12_note",
+          "value": "Relative share and growth velocity across primary underground UGV operational missions"
+        },
+        "chart": {
+          "type": "chart",
+          "id": "ch_s12_apps",
+          "chart_type": "bar",
+          "title": "Application Market Share Comparison (2025 vs 2030F)",
+          "data": {
+            "categories": [
+              "Mine Inspection",
+              "3D Mapping",
+              "Safety Ops",
+              "Infrastructure",
+              "Env Monitoring",
+              "Material Transport"
+            ],
+            "series": [
+              {
+                "name": "2025 Share (%)",
+                "values": [
+                  22.5,
+                  17.5,
+                  14.5,
+                  12.5,
+                  10.0,
+                  10.0
+                ]
+              },
+              {
+                "name": "2030F Share (%)",
+                "values": [
+                  20.0,
+                  14.0,
+                  17.0,
+                  15.0,
+                  12.0,
+                  12.5
+                ]
+              }
+            ]
+          }
+        },
+        "section_heading": {
+          "type": "text",
+          "id": "s12_head",
+          "value": "High-Velocity Operational Use Cases"
+        },
+        "narrative": {
+          "type": "text",
+          "id": "s12_narr",
+          "value": "Mine inspection and mapping represent the primary volume base, but hazardous-area safety inspection and material transport are expanding fastest (21-29% CAGR), driven by direct human hazard removal."
+        },
+        "table": {
+          "type": "table",
+          "id": "tbl_s12_apps",
+          "headers": [
+            "Application",
+            "2025 Market Share",
+            "Typical UGV ASP (USD K)",
+            "2026-30 CAGR"
+          ],
+          "rows": [
+            [
+              "Mine inspection",
+              "20-25%",
+              "120-200",
+              "17-22%"
+            ],
+            [
+              "Mapping / 3D surveying",
+              "15-20%",
+              "120-180",
+              "15-20%"
+            ],
+            [
+              "Safety / hazardous-area inspection",
+              "12-17%",
+              "150-250",
+              "21-26%"
+            ],
+            [
+              "Equipment / infrastructure inspection",
+              "10-15%",
+              "140-230",
+              "19-24%"
+            ],
+            [
+              "Environmental / gas monitoring",
+              "8-12%",
+              "130-220",
+              "21-27%"
+            ]
+          ]
+        },
+        "supporting_insight": {
+          "type": "insight",
+          "id": "ins_s12_apps",
+          "blocks": [
+            {
+              "id": "ins_s12_apps_b",
+              "title": "Autonomous Sampling Expansion",
+              "body": "Specialized sampling and explosive-zone inspection UGVs show the highest growth rate at 25-32% CAGR, as mines enforce total non-entry in blast clearance zones."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 12,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s13_title",
+          "value": "11. Customer Requirements & Specifications"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_11_1",
+            "number": "11.1",
+            "title": "Technical Specs across UGV Platform Classes"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_11_2",
+            "number": "11.2",
+            "title": "Validated Specification Thresholds"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_11_3",
+            "number": "11.3",
+            "title": "GNSS-Denied Navigation & SLAM Standards"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_11_4",
+            "number": "11.4",
+            "title": "Environmental Protection: IP65 to IP68"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_11_5",
+            "number": "11.5",
+            "title": "Mine Network Integration & Communications"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "08_multi_table_dashboard_2col",
+      "slide_index": 13,
+      "data": {
+        "title": {
+          "type": "text",
+          "id": "s14_title",
+          "value": "Technical Specifications by UGV Class & Buyer Requirement Thresholds"
+        },
+        "left_column": [
+          {
+            "type": "text",
+            "id": "s14_l_h",
+            "value": "Table 11.1: Platform Class Technical Specifications",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "tbl_s14_specs",
+            "headers": [
+              "Specification",
+              "Compact",
+              "Medium",
+              "Heavy-Duty",
+              "2030 Exp"
+            ],
+            "rows": [
+              [
+                "Vehicle weight",
+                "20-80 kg",
+                "80-500 kg",
+                "500-2,000+ kg",
+                "30-1,500 kg"
+              ],
+              [
+                "Payload capacity",
+                "5-30 kg",
+                "30-250 kg",
+                "250-1,000+ kg",
+                "10-1,000 kg"
+              ],
+              [
+                "Operating speed",
+                "3-8 km/h",
+                "5-15 km/h",
+                "8-30 km/h",
+                "5-30 km/h"
+              ],
+              [
+                "Runtime",
+                "4-10 h",
+                "6-14 h",
+                "6-16 h",
+                "8-24 h"
+              ],
+              [
+                "IP protection",
+                "IP54-IP67",
+                "IP65-IP68",
+                "IP65-IP68",
+                "IP67-IP69K"
+              ],
+              [
+                "Nav accuracy",
+                "5-20 cm",
+                "5-20 cm",
+                "5-30 cm",
+                "2-10 cm"
+              ]
+            ]
+          },
+          {
+            "type": "text",
+            "id": "s14_l_p",
+            "value": "Vehicle endurance and environmental ruggedness requirements intensify as platforms scale from man-portable inspection scouts to autonomous haulage platforms."
+          }
+        ],
+        "right_column": [
+          {
+            "type": "text",
+            "id": "s14_r_h",
+            "value": "Table 11.2: Validated Specification Thresholds",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "tbl_s14_thresh",
+            "headers": [
+              "Requirement",
+              "Buyers %",
+              "Min Threshold",
+              "Preferred Spec"
+            ],
+            "rows": [
+              [
+                "Worker-safe remote op",
+                "75-90%",
+                "Remote control",
+                "Autonomous fallback"
+              ],
+              [
+                "Autonomous navigation",
+                "65-80%",
+                "Semi-autonomous",
+                "Highly autonomous"
+              ],
+              [
+                "GNSS-denied nav",
+                "55-75%",
+                "Basic localiz.",
+                "LiDAR + Visual SLAM"
+              ],
+              [
+                "Collision avoidance",
+                "65-80%",
+                "Obstacle detect",
+                "Predictive avoidance"
+              ],
+              [
+                "8+ hour runtime",
+                "45-65%",
+                "6 hours",
+                "8-12+ hours"
+              ],
+              [
+                "Mine network integration",
+                "60-75%",
+                "Wi-Fi / Mesh",
+                "Private LTE / 5G"
+              ]
+            ]
+          },
+          {
+            "type": "insight",
+            "id": "ins_s14_thresh",
+            "blocks": [
+              {
+                "id": "ins_s14_thresh_b",
+                "title": "GNSS-Denied Localization is Critical",
+                "body": "Over 75% of underground operators view multi-sensor SLAM (LiDAR + visual + IMU) as mandatory for commercial production acceptance."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 14,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s15_title",
+          "value": "17. Pricing, Transaction & Negotiation Intelligence"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_17_1",
+            "number": "17.1",
+            "title": "UGV Platform & Subsystem Pricing Benchmarks"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_17_2",
+            "number": "17.2",
+            "title": "Sensor Package & Autonomy Software Pricing"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_17_3",
+            "number": "17.3",
+            "title": "Volume Discount Schedules & Bundling Economics"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_17_4",
+            "number": "17.4",
+            "title": "Distributor & System-Integrator Margins"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_17_5",
+            "number": "17.5",
+            "title": "Total Cost of Ownership (TCO) & Payback Targets"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "08_multi_table_dashboard_2col",
+      "slide_index": 15,
+      "data": {
+        "title": {
+          "type": "text",
+          "id": "s16_title",
+          "value": "Pricing Benchmarks, Transaction Structures & Supplier Selection Weights"
+        },
+        "left_column": [
+          {
+            "type": "text",
+            "id": "s16_l_h",
+            "value": "Table 17.1: Equipment & Subsystem Pricing",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "tbl_s16_price",
+            "headers": [
+              "Pricing / Transaction Metric",
+              "Market Range"
+            ],
+            "rows": [
+              [
+                "Compact inspection UGV ASP",
+                "USD 50K-120K"
+              ],
+              [
+                "Medium mining UGV ASP",
+                "USD 120K-250K"
+              ],
+              [
+                "Heavy-duty mining UGV ASP",
+                "USD 250K-750K+"
+              ],
+              [
+                "LiDAR / sensor package",
+                "USD 15K-80K"
+              ],
+              [
+                "Autonomy navigation software",
+                "USD 10K-60K"
+              ],
+              [
+                "Site integration / commissioning",
+                "USD 10K-100K"
+              ]
+            ]
+          },
+          {
+            "type": "text",
+            "id": "s16_l_p",
+            "value": "Sensors and autonomy software represent up to 45% of complete vehicle deployment value, offering recurring annual software license revenue."
+          }
+        ],
+        "right_column": [
+          {
+            "type": "text",
+            "id": "s16_r_h",
+            "value": "Table 17.2: Volume Discounts & Decision Weights",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "tbl_s16_neg",
+            "headers": [
+              "Negotiation Variable",
+              "Typical Range / Impact"
+            ],
+            "rows": [
+              [
+                "Volume discount - 5-10 units",
+                "5-10%"
+              ],
+              [
+                "Volume discount - 10-25 units",
+                "10-18%"
+              ],
+              [
+                "Volume discount - 25+ units",
+                "15-25%"
+              ],
+              [
+                "Technical performance weighting",
+                "20-30%"
+              ],
+              [
+                "Reliability / uptime weighting",
+                "15-25%"
+              ],
+              [
+                "Equipment price weighting",
+                "10-20%"
+              ]
+            ]
+          },
+          {
+            "type": "insight",
+            "id": "ins_s16_neg",
+            "blocks": [
+              {
+                "id": "ins_s16_neg_b",
+                "title": "Uptime Outweighs Upfront Price",
+                "body": "Initial purchase price carries only 10-20% weight in final supplier selection. Demonstrated uptime, mine integration, and local support network command 60%+ combined weight."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 16,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s17_title",
+          "value": "21. Technology Trial & Adoption Pipeline"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_21_1",
+            "number": "21.1",
+            "title": "Technology Screening & Evaluation Programs"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_21_2",
+            "number": "21.2",
+            "title": "Proof-of-Concept (POC) Conversion Dynamics"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_21_3",
+            "number": "21.3",
+            "title": "Mine-Site Pilots & Commercial Deployment"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_21_4",
+            "number": "21.4",
+            "title": "Multi-Site Fleet Expansion Programs"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_21_5",
+            "number": "21.5",
+            "title": "Near-Term Identifiable Equipment Pipeline"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "04_table_chart",
+      "slide_index": 17,
+      "data": {
+        "context_note": {
+          "type": "text",
+          "id": "s18_note",
+          "value": "Conversion metrics and active programs across the commercial mining UGV adoption lifecycle"
+        },
+        "chart": {
+          "type": "chart",
+          "id": "ch_s18_funnel",
+          "chart_type": "bar",
+          "title": "Active Commercial Programs & Pipeline Value ($M)",
+          "data": {
+            "categories": [
+              "Screening",
+              "POC",
+              "Prototype",
+              "Mine Pilot",
+              "Production",
+              "Fleet Expansion"
+            ],
+            "series": [
+              {
+                "name": "Active Programs Midpoint",
+                "values": [
+                  150,
+                  82,
+                  55,
+                  35,
+                  13,
+                  7
+                ]
+              },
+              {
+                "name": "Program Value Midpoint ($M)",
+                "values": [
+                  42.5,
+                  31.5,
+                  25.0,
+                  21.0,
+                  10.0,
+                  15.0
+                ]
+              }
+            ]
+          }
+        },
+        "section_heading": {
+          "type": "text",
+          "id": "s18_head",
+          "value": "Adoption Funnel & Conversion Chasm"
+        },
+        "narrative": {
+          "type": "text",
+          "id": "s18_narr",
+          "value": "Over 200 programs are actively evaluating UGVs. The critical commercial hurdle occurs between POC and mine pilot (35-50% conversion), where systems must prove communications and environmental resilience."
+        },
+        "table": {
+          "type": "table",
+          "id": "tbl_s18_funnel",
+          "headers": [
+            "Adoption Stage",
+            "Active Programs",
+            "Estimated UGV Units",
+            "Program Value (USD M)",
+            "Stage Conversion"
+          ],
+          "rows": [
+            [
+              "Technology screening",
+              "120-180",
+              "250-450",
+              "25-60",
+              "-"
+            ],
+            [
+              "Technology evaluation",
+              "80-130",
+              "180-350",
+              "20-50",
+              "55-70%"
+            ],
+            [
+              "Proof-of-concept",
+              "65-100",
+              "150-280",
+              "18-45",
+              "40-55%"
+            ],
+            [
+              "Prototype deployment",
+              "40-70",
+              "100-180",
+              "15-35",
+              "45-60%"
+            ],
+            [
+              "Mine-site pilot",
+              "25-45",
+              "70-140",
+              "12-30",
+              "35-50%"
+            ]
+          ]
+        },
+        "supporting_insight": {
+          "type": "insight",
+          "id": "ins_s18_funnel",
+          "blocks": [
+            {
+              "id": "ins_s18_funnel_b",
+              "title": "USD 83M-207M Identifiable Pipeline",
+              "body": "Identified near-term programs encompass 650-1,220 prospective UGV units representing $83M-$207M in equipment and software procurement through 2027."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 18,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s19_title",
+          "value": "26. Regional Intelligence: Europe & Germany"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_26_1",
+            "number": "26.1",
+            "title": "European Mining UGV Market Sizing & Fleet"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_26_2",
+            "number": "26.2",
+            "title": "Demand Concentration: Nordics & Central Europe"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_26_3",
+            "number": "26.3",
+            "title": "Germany Market Sizing & Tunneling Crossover"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_26_4",
+            "number": "26.4",
+            "title": "European Buyer & CE Compliance Standards"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_26_5",
+            "number": "26.5",
+            "title": "Regional Service & Technical Support Networks"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "08_multi_table_dashboard_2col",
+      "slide_index": 19,
+      "data": {
+        "title": {
+          "type": "text",
+          "id": "s20_title",
+          "value": "Regional Deep Dive: European Market & Germany Sub-Surface Opportunity"
+        },
+        "left_column": [
+          {
+            "type": "text",
+            "id": "s20_l_h",
+            "value": "Table 26.1: Europe Mining UGV Market Data",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "tbl_s20_eur",
+            "headers": [
+              "Indicator",
+              "2024",
+              "2025",
+              "2026E",
+              "2030F"
+            ],
+            "rows": [
+              [
+                "Market value",
+                "USD 40-55M",
+                "USD 50-70M",
+                "USD 60-85M",
+                "USD 110-160M"
+              ],
+              [
+                "Annual deployments",
+                "250-400",
+                "300-500",
+                "350-600",
+                "700-1,100"
+              ],
+              [
+                "Installed fleet",
+                "900-1,400",
+                "1,100-1,600",
+                "1,300-1,900",
+                "2,800-4,200"
+              ],
+              [
+                "Underground share",
+                "60-68%",
+                "62-70%",
+                "63-71%",
+                "65-73%"
+              ]
+            ]
+          },
+          {
+            "type": "text",
+            "id": "s20_l_p",
+            "value": "Europe represents 23-28% of global market revenue, anchored by highly automated Swedish and Finnish underground hard-rock mines."
+          }
+        ],
+        "right_column": [
+          {
+            "type": "text",
+            "id": "s20_r_h",
+            "value": "Table 26.3: Germany Market Sizing & Tunneling",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "tbl_s20_ger",
+            "headers": [
+              "Indicator",
+              "2024",
+              "2025",
+              "2026E",
+              "2030F"
+            ],
+            "rows": [
+              [
+                "Market value",
+                "USD 3.5-4.5M",
+                "USD 4-6M",
+                "USD 5-7M",
+                "USD 9-14M"
+              ],
+              [
+                "Annual deployments",
+                "20-35",
+                "25-45",
+                "30-55",
+                "60-100"
+              ],
+              [
+                "Installed fleet",
+                "80-130",
+                "100-150",
+                "120-180",
+                "250-400"
+              ],
+              [
+                "Tunnel / underground",
+                "45-55%",
+                "45-55%",
+                "45-60%",
+                "50-60%"
+              ]
+            ]
+          },
+          {
+            "type": "insight",
+            "id": "ins_s20_ger",
+            "blocks": [
+              {
+                "id": "ins_s20_ger_b",
+                "title": "Tunneling & Industrial Infrastructure",
+                "body": "Germany's opportunity centers on underground tunneling inspection, infrastructure monitoring, and industrial robotics crossover, scaling to $9-14M by 2030."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 20,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s21_title",
+          "value": "32. Customer-Validated Market Opportunity & White-Space Analysis"
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_32_1",
+            "number": "32.1",
+            "title": "GNSS-Denied Navigation Capability Gap"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_32_2",
+            "number": "32.2",
+            "title": "Multi-Sensor Inspection & Edge AI Analytics"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_32_3",
+            "number": "32.3",
+            "title": "Long-Endurance Battery & Hot-Swap Architecture"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_32_4",
+            "number": "32.4",
+            "title": "Retrofit Autonomy Kits for Existing Machinery"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_32_5",
+            "number": "32.5",
+            "title": "Recurring Robotics-as-a-Service (RaaS) Models"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "06_large_table",
+      "slide_index": 21,
+      "data": {
+        "table_title": {
+          "type": "text",
+          "id": "s22_title",
+          "value": "Table 32.1: Customer-Validated Market Opportunity & White-Space Matrix"
+        },
+        "table": {
+          "type": "table",
+          "id": "tbl_s22_white",
+          "headers": [
+            "Opportunity / White Space",
+            "Current Market Penetration",
+            "Customer Requirement / Gap",
+            "Addressable Demand",
+            "Typical ASP / Value",
+            "2030 Potential"
+          ],
+          "rows": [
+            [
+              "GNSS-denied autonomous inspection",
+              "25-40%",
+              "55-75% of buyers require robust underground navigation",
+              "180-320 units/year",
+              "USD 120K-220K",
+              "USD 80-130M"
+            ],
+            [
+              "Multi-sensor inspection UGV",
+              "30-45%",
+              "50-70% require sensor fusion",
+              "150-280 units/year",
+              "USD 150K-280K",
+              "USD 70-110M"
+            ],
+            [
+              "Edge-AI inspection",
+              "20-35%",
+              "30-45% current adoption vs 65-80% expected",
+              "120-250 units/year",
+              "USD 140K-260K",
+              "USD 60-100M"
+            ],
+            [
+              "Long-endurance UGV",
+              "20-35%",
+              "45-65% require 8+ hour operation",
+              "100-200 units/year",
+              "USD 150K-300K",
+              "USD 50-80M"
+            ],
+            [
+              "Autonomous gas / environmental monitoring",
+              "15-25%",
+              "Continuous unmanned monitoring requirement",
+              "80-160 units/year",
+              "USD 130K-220K",
+              "USD 35-60M"
+            ],
+            [
+              "Autonomous equipment inspection",
+              "20-35%",
+              "Predictive maintenance adoption gap",
+              "100-200 units/year",
+              "USD 140K-250K",
+              "USD 45-75M"
+            ],
+            [
+              "Fleet-management platform",
+              "20-35%",
+              "60-80% expected future adoption",
+              "50-120 fleet programs",
+              "USD 25K-100K/year",
+              "USD 15-35M recurring"
+            ],
+            [
+              "Retrofit autonomy kits",
+              "20-30%",
+              "50-70% prefer retrofit where feasible",
+              "200-400 vehicles/year",
+              "USD 30K-150K",
+              "USD 40-75M"
+            ],
+            [
+              "Rapid-deployment rescue UGV",
+              "15-25%",
+              "6-9% of current demand; limited supply",
+              "40-100 units/year",
+              "USD 160K-300K",
+              "USD 20-40M"
+            ],
+            [
+              "RaaS / managed robotics",
+              "<10%",
+              "High upfront CAPEX remains a barrier",
+              "50-120 deployments/year",
+              "USD 50K-250K/year",
+              "USD 20-50M recurring"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "template_id": "03_section_opener",
+      "slide_index": 22,
+      "data": {
+        "section_title": {
+          "type": "text",
+          "id": "s23_title",
+          "value": "35. Company Benchmarking: Komatsu Ltd."
+        },
+        "index_list": [
+          {
+            "type": "index_item",
+            "id": "sub_35_1",
+            "number": "35.1",
+            "title": "Corporate Financials & Mining Equipment Scope"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_35_2",
+            "number": "35.2",
+            "title": "FrontRunner Autonomous Haulage System (AHS)"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_35_3",
+            "number": "35.3",
+            "title": "1,000+ Autonomous Truck Milestone & Nevada Deployment"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_35_4",
+            "number": "35.4",
+            "title": "Proprietary Autonomous Revenue & Fleet Sizing"
+          },
+          {
+            "type": "index_item",
+            "id": "sub_35_5",
+            "number": "35.5",
+            "title": "Strategic Positioning in Heavy Mining UGVs"
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "08_multi_table_dashboard_2col",
+      "slide_index": 23,
+      "data": {
+        "title": {
+          "type": "text",
+          "id": "s24_title",
+          "value": "Company Benchmarking: Komatsu Ltd. Financial Profile & FrontRunner AHS Fleet"
+        },
+        "left_column": [
+          {
+            "type": "text",
+            "id": "s24_l_h",
+            "value": "Table 35.1: Komatsu Financials & Mining Profile",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "tbl_s24_komatsu",
+            "headers": [
+              "Financial / Operational Metric",
+              "Komatsu Ltd."
+            ],
+            "rows": [
+              [
+                "Headquarters",
+                "Tokyo, Japan"
+              ],
+              [
+                "FY2025 Revenue",
+                "JPY 4,132.8B"
+              ],
+              [
+                "FY2025 Operating Income",
+                "JPY 567.3B (13.7%)"
+              ],
+              [
+                "FY2025 R&D Expenditure",
+                "JPY 110.5B (2.7%)"
+              ],
+              [
+                "Mining Equipment Sales",
+                "JPY 1,916.2B (>50%)"
+              ],
+              [
+                "Core Mining Tech",
+                "FrontRunner, DISPATCH"
+              ]
+            ]
+          },
+          {
+            "type": "text",
+            "id": "s24_l_p",
+            "value": "Komatsu's mining equipment business exceeded 50% of total company sales, generating substantial cash flow to fund autonomous and electrification R&D."
+          }
+        ],
+        "right_column": [
+          {
+            "type": "text",
+            "id": "s24_r_h",
+            "value": "Table 35.2: FrontRunner Autonomous Haulage Metrics",
+            "role": "heading"
+          },
+          {
+            "type": "table",
+            "id": "tbl_s24_ahs",
+            "headers": [
+              "FrontRunner Platform Metric",
+              "Fleet Indicator"
+            ],
+            "rows": [
+              [
+                "Commercial launch",
+                "2008 (18+ years)"
+              ],
+              [
+                "Autonomous trucks commissioned",
+                "1,000+ units"
+              ],
+              [
+                "Material moved autonomously",
+                "11.5B+ tonnes"
+              ],
+              [
+                "1,000th autonomous unit",
+                "930E-5AT (290t, Barrick)"
+              ],
+              [
+                "Active AHS mine sites",
+                "35-50 sites worldwide"
+              ],
+              [
+                "Annual autonomous shipments",
+                "90-160 units"
+              ]
+            ]
+          },
+          {
+            "type": "insight",
+            "id": "ins_s24_ahs",
+            "blocks": [
+              {
+                "id": "ins_s24_ahs_b",
+                "title": "Unmatched Haulage Operational Record",
+                "body": "With over 11.5 billion tonnes moved autonomously across 1,000+ ultra-class haul trucks, Komatsu sets the industry benchmark for commercial reliability in surface autonomous operations."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template_id": "05_insight_information",
+      "slide_index": 24,
+      "data": {
+        "title": {
+          "type": "text",
+          "id": "s25_title",
+          "value": "Strategic Recommendations & 2030 Commercialization Roadmap"
+        },
+        "left_column": [
+          {
+            "type": "text",
+            "id": "s25_l_h",
+            "value": "Near-Term Priorities (0-18 Months)",
+            "role": "heading"
+          },
+          {
+            "type": "text",
+            "id": "s25_l_p",
+            "value": "Suppliers must bridge the trial-to-production chasm by delivering validated reliability in harsh sub-surface environments rather than marketing standalone hardware."
+          },
+          {
+            "type": "bullet_list",
+            "id": "s25_l_b",
+            "items": [
+              {
+                "id": "s25_l_b_1",
+                "text": "Deploy multi-modal LiDAR + Visual SLAM to eliminate GNSS reliance in drift headings."
+              },
+              {
+                "id": "s25_l_b_2",
+                "text": "Provide plug-and-play retrofit kits for existing light utility vehicles to accelerate entry."
+              },
+              {
+                "id": "s25_l_b_3",
+                "text": "Establish regional field depots in primary hubs (Perth, Sudbury, Antofagasta)."
+              }
+            ]
+          }
+        ],
+        "right_column": [
+          {
+            "type": "text",
+            "id": "s25_r_h",
+            "value": "Long-Term Scalability (18-36 Months)",
+            "role": "heading"
+          },
+          {
+            "type": "text",
+            "id": "s25_r_p",
+            "value": "Sustainable competitive advantage will center on digital mine integration, centralized fleet orchestration software, and predictive maintenance algorithms."
+          },
+          {
+            "type": "insight",
+            "id": "ins_s25_rec",
+            "blocks": [
+              {
+                "id": "ins_s25_rec_b",
+                "title": "Integrated Fleet Solution Imperative",
+                "body": "The winning 2030 business model integrates ruggedized IP68 hardware with recurring fleet management software, edge AI defect detection, and full mine safety compliance."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

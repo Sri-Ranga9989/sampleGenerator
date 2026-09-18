@@ -143,8 +143,13 @@ class TableLayoutEngine:
                     align="center" if (is_header or val_str.replace('.', '', 1).isdigit()) else "left"
                 ))
 
-            natural_h = max_cell_h + padding_y
-            allocated_h = max(natural_h, min_row_height)
+            max_lines = max((len(c.lines) for c in cell_layouts), default=1)
+            if max_lines > 1:
+                natural_h = max_cell_h + padding_y
+                allocated_h = max(natural_h, min_row_height)
+            else:
+                natural_h = min_row_height
+                allocated_h = min_row_height
 
             return RowLayout(
                 cells=cell_layouts,

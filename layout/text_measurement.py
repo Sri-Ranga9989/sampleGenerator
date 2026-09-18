@@ -17,8 +17,9 @@ WINDOWS_FONT_DIR = r"C:\Windows\Fonts"
 
 
 def get_font(font_name: str = "arial", size_pt: int = 14) -> ImageFont.ImageFont:
-    """Load TrueType font or fallback safely."""
-    cache_key = (font_name.lower(), int(size_pt))
+    """Load TrueType font scaled to canvas pixels (1 pt in 16:9 canvas = 2.0 px)."""
+    size_px = max(1, int(round(size_pt * 2.0)))
+    cache_key = (font_name.lower(), size_px)
     if cache_key in _FONT_CACHE:
         return _FONT_CACHE[cache_key]
 
@@ -37,7 +38,7 @@ def get_font(font_name: str = "arial", size_pt: int = 14) -> ImageFont.ImageFont
 
     try:
         if os.path.exists(font_path):
-            font = ImageFont.truetype(font_path, int(size_pt))
+            font = ImageFont.truetype(font_path, size_px)
         else:
             font = ImageFont.load_default()
     except Exception:
@@ -48,14 +49,14 @@ def get_font(font_name: str = "arial", size_pt: int = 14) -> ImageFont.ImageFont
 
 
 def measure_single_line(text: str, font_name: str, size_pt: int) -> Tuple[float, float]:
-    """Returns (width_px, height_px) of a single line of text."""
+    """Returns (width_px, height_px) in canvas pixels of a single line of text."""
     if not text:
-        return (0.0, float(size_pt) * 1.2)
+        return (0.0, float(size_pt) * 2.0 * 1.2)
     font = get_font(font_name, size_pt)
     bbox = _DRAW.textbbox((0, 0), text, font=font)
     width = float(bbox[2] - bbox[0])
     # Use font metric height or bbox height with baseline padding
-    height = max(float(bbox[3] - bbox[1]), float(size_pt) * 1.2)
+    height = max(float(bbox[3] - bbox[1]), float(size_pt) * 2.0 * 1.2)
     return width, height
 
 
@@ -117,7 +118,7 @@ def measure_multiline_text(
             "height": 0.0,
             "line_count": 0,
             "lines": [],
-            "line_height": size_pt * line_spacing
+            "line_height": float(size_pt) * 2.0 * line_spacing
         }
 
     lines = wrap_text(text, font_name, size_pt, effective_max_w)
@@ -130,7 +131,7 @@ def measure_multiline_text(
         if w > max_w:
             max_w = w
 
-    single_line_h = float(size_pt) * line_spacing
+    single_line_h = float(size_pt) * 2.0 * line_spacing
     total_h = len(lines) * single_line_h
 
     return {

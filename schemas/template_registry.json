@@ -8,79 +8,132 @@
       "annotation": "assets/templates/mining_ugv/annotations/01_cover_title_image.json",
       "reference": "assets/templates/mining_ugv/reference/01_cover_title_image.png",
       "background": "bg_03.png",
-      "supported_content_types": ["cover"],
+      "supported_content_types": [
+        "cover"
+      ],
       "continuation_target": null,
-      "overflow_strategy": ["reduce_font_size"]
+      "overflow_strategy": [
+        "reduce_font_size"
+      ]
     },
     "02_toc_image": {
       "template_id": "02_toc_image",
       "template_name": "Table of Contents",
       "annotation": "assets/templates/mining_ugv/annotations/02_toc_image.json",
       "reference": "assets/templates/mining_ugv/reference/02_toc_image.png",
-      "background": "bg_01.png",
-      "supported_content_types": ["table_of_contents"],
+      "background": "bg_02.png",
+      "supported_content_types": [
+        "table_of_contents"
+      ],
       "continuation_target": "02_toc_image",
-      "overflow_strategy": ["wrap_text", "reduce_spacing", "reduce_font_size", "rebalance_columns", "split_into_continuation_slide"]
+      "overflow_strategy": [
+        "wrap_text",
+        "reduce_spacing",
+        "reduce_font_size",
+        "rebalance_columns",
+        "split_into_continuation_slide"
+      ]
     },
     "03_section_opener": {
       "template_id": "03_section_opener",
       "template_name": "Section Opener",
       "annotation": "assets/templates/mining_ugv/annotations/03_section_opener.json",
       "reference": "assets/templates/mining_ugv/reference/03_section_opener.png",
-      "background": "bg_02.png",
-      "supported_content_types": ["section_opener"],
+      "background": "bg_01.png",
+      "supported_content_types": [
+        "section_opener"
+      ],
       "continuation_target": "05_insight_information",
-      "overflow_strategy": ["reduce_spacing", "reduce_font_size", "split_into_continuation_slide"]
+      "overflow_strategy": [
+        "reduce_spacing",
+        "reduce_font_size",
+        "split_into_continuation_slide"
+      ]
     },
     "04_table_chart": {
       "template_id": "04_table_chart",
       "template_name": "Table + Chart",
       "annotation": "assets/templates/mining_ugv/annotations/04_table_chart.json",
       "reference": "assets/templates/mining_ugv/reference/04_table_chart.png",
-      "background": "bg_01.png",
-      "supported_content_types": ["table_chart"],
+      "background": "bg_02.png",
+      "supported_content_types": [
+        "table_chart"
+      ],
       "continuation_target": null,
-      "overflow_strategy": ["reduce_spacing", "reduce_font_size", "optimize_dimensions"]
+      "overflow_strategy": [
+        "reduce_spacing",
+        "reduce_font_size",
+        "optimize_dimensions"
+      ]
     },
     "05_insight_information": {
       "template_id": "05_insight_information",
       "template_name": "Insight Information 2-Col",
       "annotation": "assets/templates/mining_ugv/annotations/05_insight_information.json",
       "reference": "assets/templates/mining_ugv/reference/05_insight_information.png",
-      "background": "bg_01.png",
-      "supported_content_types": ["insight_information", "multi_column_index_list"],
+      "background": "bg_02.png",
+      "supported_content_types": [
+        "insight_information",
+        "multi_column_index_list"
+      ],
       "continuation_target": "05_insight_information",
-      "overflow_strategy": ["reduce_spacing", "reduce_font_size", "rebalance_columns", "split_into_continuation_slide"]
+      "overflow_strategy": [
+        "reduce_spacing",
+        "reduce_font_size",
+        "rebalance_columns",
+        "split_into_continuation_slide"
+      ]
     },
     "06_large_table": {
       "template_id": "06_large_table",
       "template_name": "Large Table",
       "annotation": "assets/templates/mining_ugv/annotations/06_large_table.json",
       "reference": "assets/templates/mining_ugv/reference/06_large_table.png",
-      "background": "bg_01.png",
-      "supported_content_types": ["large_table"],
+      "background": "bg_02.png",
+      "supported_content_types": [
+        "large_table"
+      ],
       "continuation_target": "06_large_table",
-      "overflow_strategy": ["optimize_column_widths", "reduce_padding", "reduce_font_size", "split_rows", "split_columns"]
+      "overflow_strategy": [
+        "optimize_column_widths",
+        "reduce_padding",
+        "reduce_font_size",
+        "split_rows",
+        "split_columns"
+      ]
     },
     "07_large_chart": {
       "template_id": "07_large_chart",
       "template_name": "Large Chart",
       "annotation": "assets/templates/mining_ugv/annotations/07_large_chart.json",
       "reference": "assets/templates/mining_ugv/reference/07_large_chart.png",
-      "background": "bg_01.png",
-      "supported_content_types": ["large_chart"],
+      "background": "bg_02.png",
+      "supported_content_types": [
+        "large_chart"
+      ],
       "continuation_target": "07_large_chart",
-      "overflow_strategy": ["optimize_chart_margins", "reduce_font_size", "split_into_continuation_slide"]
+      "overflow_strategy": [
+        "optimize_chart_margins",
+        "reduce_font_size",
+        "split_into_continuation_slide"
+      ]
     },
     "08_multi_table_dashboard_2col": {
       "template_id": "08_multi_table_dashboard_2col",
       "template_name": "Multi-Table Dashboard 2-Col",
       "annotation": "assets/templates/mining_ugv/annotations/08_multi_table_dashboard_2col.json",
       "reference": "assets/templates/mining_ugv/reference/08_multi_table_dashboard_2col.png",
-      "background": "bg_01.png",
-      "supported_content_types": ["multi_table_dashboard_2col"],
+      "background": "bg_02.png",
+      "supported_content_types": [
+        "multi_table_dashboard_2col"
+      ],
       "continuation_target": "08_multi_table_dashboard_2col",
-      "overflow_strategy": ["reduce_spacing", "reduce_font_size", "rebalance_columns", "split_into_continuation_slide"]
+      "overflow_strategy": [
+        "reduce_spacing",
+        "reduce_font_size",
+        "rebalance_columns",
+        "split_into_continuation_slide"
+      ]
     }
   }
 }

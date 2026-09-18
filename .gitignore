@@ -33,3 +33,8 @@ htmlcov/
 output/*.pptx
 output/**/*.pptx
 output/rendered/
+
+# Scratch and intermediate dumps
+email_content_dump.txt
+tables_summary.txt
+*.tmp

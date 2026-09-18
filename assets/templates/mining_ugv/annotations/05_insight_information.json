@@ -8,7 +8,7 @@
     "aspect_ratio": "16:9"
   },
   "background": {
-    "asset": "bg_01.png",
+    "asset": "bg_02.png",
     "type": "image"
   },
   "safe_area": {

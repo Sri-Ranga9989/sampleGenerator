@@ -36,7 +36,7 @@ class TemplateRenderer:
         Returns a list of LayoutResults (includes continuation slides if overflow occurs).
         """
         annotation = self.get_annotation(slide.template_id)
-        background = annotation.get("background", {}).get("asset", "bg_01.png")
+        background = annotation.get("background", {}).get("asset", "bg_02.png")
 
         handler_map = {
             "01_cover_title_image": self._layout_01,
@@ -95,7 +95,7 @@ class TemplateRenderer:
 
         # Measure title
         t_reg = annotation["regions"]["title"]
-        t_meas = fit_text_to_budget(title_text, t_reg["width"], t_reg["height"], 44, 32)
+        t_meas = fit_text_to_budget(title_text, t_reg["width"], t_reg["height"], 36, 28)
         lr.components.append(ComponentGeometry(
             component_id="title",
             component_type="text",
@@ -111,12 +111,12 @@ class TemplateRenderer:
 
         # Subtitle
         s_reg = annotation["regions"]["subtitle"]
-        s_meas = fit_text_to_budget(subtitle_text, s_reg["width"], s_reg["height"], 20, 16)
+        s_meas = fit_text_to_budget(subtitle_text, s_reg["width"], s_reg["height"], 18, 14)
         lr.components.append(ComponentGeometry(
             component_id="subtitle",
             component_type="text",
             x=s_reg["x"],
-            y=t_reg["y"] + t_meas["height"] + 24.0,
+            y=s_reg["y"],
             width=s_reg["width"],
             height=s_meas["height"],
             data=subtitle_text,
@@ -190,7 +190,7 @@ class TemplateRenderer:
                 width=t_reg["width"],
                 height=t_reg["height"],
                 data=lr.title,
-                font_size=28,
+                font_size=24,
                 style={"bold": True, "color": Theme.PRIMARY_NAVY, "align": "center"}
             ))
 
@@ -270,7 +270,7 @@ class TemplateRenderer:
 
         # Section title
         t_reg = annotation["regions"]["section_title"]
-        t_meas = fit_text_to_budget(sec_title, t_reg["width"], t_reg["height"], 38, 28)
+        t_meas = fit_text_to_budget(sec_title, t_reg["width"], 150.0, 34, 26)
         lr.components.append(ComponentGeometry(
             component_id="section_title",
             component_type="text",
@@ -288,7 +288,7 @@ class TemplateRenderer:
         idx_reg = annotation["regions"]["index_list"]
         primary_items, overflow_items = self.overflow_engine.resolve_index_overflow(index_items, idx_reg["height"], item_height=38.0)
 
-        curr_y = idx_reg["y"]
+        curr_y = max(float(idx_reg["y"]), t_reg["y"] + t_meas["height"] + 28.0)
         for it in primary_items:
             lr.components.append(ComponentGeometry(
                 component_id=f"idx_{it.id}",
@@ -312,7 +312,7 @@ class TemplateRenderer:
                 slide_id=f"{slide.slide_id}_cont_05",
                 slide_index=slide.slide_index + 1,
                 template_id="05_insight_information",
-                background="bg_01.png",
+                background="bg_02.png",
                 title=f"{sec_title} (Continued Index)",
                 overflow_status="CONTINUED"
             )
@@ -488,27 +488,33 @@ class TemplateRenderer:
     # -------------------------------------------------------------
     def _layout_05(self, slide: Slide, annotation: Dict[str, Any], background: str) -> List[LayoutResult]:
         t_text, t_id = self._extract_text_and_id(slide.data.regions.get("title"), slide.title or "Market Insights & Analysis", f"s{slide.slide_index+1}_title")
+        tmpl_id = slide.template_id or "05_insight_information"
         lr = LayoutResult(
             slide_id=slide.slide_id,
             slide_index=slide.slide_index,
-            template_id="05_insight_information",
+            template_id=tmpl_id,
             background=background,
             title=t_text
         )
 
         # Slide Title
+        t_meas = fit_text_to_budget(lr.title, 1600.0, 90.0, 24, 20)
         lr.components.append(ComponentGeometry(
             component_id="slide_title",
             component_type="text",
             x=105.0,
             y=45.0,
             width=1600.0,
-            height=50.0,
+            height=t_meas["height"],
             data=lr.title,
-            font_size=24,
+            font_size=t_meas["font_size"],
             style={"bold": True, "color": Theme.PRIMARY_NAVY},
             provenance_id=t_id
         ))
+
+        # Dynamic column start_y ensuring zero title overlap
+        start_col_y = max(130.0, 45.0 + t_meas["height"] + 20.0)
+        avail_col_h = 1010.0 - start_col_y
 
         # Collect blocks for left and right columns
         left_blocks = slide.data.left_column_blocks or []
@@ -532,9 +538,9 @@ class TemplateRenderer:
         l_res = StackLayoutEngine.layout_vertical_stack(
             blocks=left_blocks,
             x=105.0,
-            start_y=130.0,
+            start_y=start_col_y,
             width=790.0,
-            available_height=820.0
+            available_height=avail_col_h
         )
         for b in l_res.blocks:
             lr.components.append(ComponentGeometry(
@@ -553,9 +559,9 @@ class TemplateRenderer:
         r_res = StackLayoutEngine.layout_vertical_stack(
             blocks=right_blocks,
             x=945.0,
-            start_y=130.0,
+            start_y=start_col_y,
             width=790.0,
-            available_height=820.0
+            available_height=avail_col_h
         )
         for b in r_res.blocks:
             lr.components.append(ComponentGeometry(
@@ -577,7 +583,7 @@ class TemplateRenderer:
             lr.overflow_status = "SPLIT"
             cont_slide = Slide(
                 slide_id=f"{slide.slide_id}_cont",
-                template_id="05_insight_information",
+                template_id=tmpl_id,
                 slide_index=slide.slide_index + 1,
                 title=f"{lr.title} (Continued)",
                 data=SlideData(
@@ -611,7 +617,7 @@ class TemplateRenderer:
             available_height=t_reg["height"],
             preferred_font_size=10,
             minimum_font_size=8,
-            min_row_height=26.0
+            min_row_height=24.0
         )
 
         results = []
@@ -620,7 +626,7 @@ class TemplateRenderer:
 
         while curr_layout:
             is_cont = (part > 1)
-            s_title = title_text if not is_cont else f"{title_text} (Continued Part {part})"
+            s_title = title_text if not is_cont else f"{title_text} (Part {part})"
             s_id = slide.slide_id if not is_cont else f"{slide.slide_id}_part{part}"
 
             lr = LayoutResult(
@@ -633,25 +639,27 @@ class TemplateRenderer:
             )
 
             # Table Title
+            t_meas = fit_text_to_budget(s_title, 1700.0, 70.0, 22, 18)
             lr.components.append(ComponentGeometry(
                 component_id="table_title",
                 component_type="text",
                 x=105.0,
-                y=50.0,
+                y=45.0,
                 width=1700.0,
-                height=50.0,
+                height=t_meas["height"],
                 data=s_title,
-                font_size=24,
+                font_size=t_meas["font_size"],
                 style={"bold": True, "color": Theme.PRIMARY_NAVY},
                 provenance_id=title_id
             ))
 
             # Table
+            tbl_y = max(float(t_reg["y"]), 45.0 + t_meas["height"] + 15.0)
             lr.components.append(ComponentGeometry(
                 component_id="table",
                 component_type="table",
                 x=t_reg["x"],
-                y=t_reg["y"],
+                y=tbl_y,
                 width=t_reg["width"],
                 height=curr_layout.total_height,
                 data=curr_layout,

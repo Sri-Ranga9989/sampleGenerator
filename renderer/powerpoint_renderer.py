@@ -17,6 +17,7 @@ from renderer.table_renderer import TableRenderer
 from renderer.chart_renderer import ChartRenderer
 from renderer.component_renderer import ComponentRenderer
 from models.report_model import Report, TOCItem, IndexItem, BulletListBlock, InsightBlock, ChartBlock, TableBlock, TextBlock
+from config.theme import Theme
 
 
 class PowerPointRenderer:
@@ -70,17 +71,34 @@ class PowerPointRenderer:
 
         if c_type == "text":
             style = comp.style or {}
+            if isinstance(comp.data, TextBlock):
+                text_val = comp.data.text
+                is_heading = (comp.data.role == "heading")
+                block_style = comp.data.style or {}
+            elif isinstance(comp.data, dict):
+                text_val = str(comp.data.get("value", comp.data.get("text", "")))
+                is_heading = (comp.data.get("role") == "heading")
+                block_style = comp.data.get("style", {})
+            else:
+                text_val = str(comp.data)
+                is_heading = False
+                block_style = {}
+
+            bold = style.get("bold", block_style.get("bold", True if is_heading else False))
+            color_hex = style.get("color", block_style.get("color", Theme.PRIMARY_NAVY if is_heading else Theme.TEXT_DARK))
+            align = style.get("align", block_style.get("align", "left"))
+
             TextRenderer.render_text(
                 slide=slide,
-                text=str(comp.data),
+                text=text_val,
                 x=comp.x,
                 y=comp.y,
                 width=comp.width,
                 height=comp.height,
-                font_size_pt=comp.font_size or 12.0,
-                bold=style.get("bold", False),
-                color_hex=style.get("color", "#1F2937"),
-                alignment=style.get("align", "left"),
+                font_size_pt=comp.font_size or (16.0 if is_heading else 11.0),
+                bold=bold,
+                color_hex=color_hex,
+                alignment=align,
                 line_spacing=style.get("line_spacing", 1.15)
             )
 
