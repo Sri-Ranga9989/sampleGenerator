@@ -251,14 +251,15 @@ def serve_cmd(args):
         sys.exit(1)
 
     port = args.port
+    host = getattr(args, "host", "0.0.0.0")
     print(f"\n=======================================================")
     print(f"PPT GENERATOR V1 — API SERVER")
     print(f"=======================================================")
-    print(f"Starting server on http://0.0.0.0:{port}")
+    print(f"Starting server on http://{host}:{port}")
     print(f"API docs at http://localhost:{port}/docs")
     print(f"=======================================================\n")
 
-    uvicorn.run("api_server:app", host="0.0.0.0", port=port, reload=False)
+    uvicorn.run("api_server:app", host=host, port=port, reload=False)
 
 
 def main():
@@ -298,7 +299,8 @@ def main():
 
     # serve (NEW)
     p_serve = subparsers.add_parser("serve", help="Start FastAPI server for PPT Generator API")
-    p_serve.add_argument("--port", type=int, default=8000, help="Server port (default: 8000)")
+    p_serve.add_argument("--host", default="0.0.0.0", help="Server host (default: 0.0.0.0)")
+    p_serve.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8050)), help="Server port (default: 8050)")
 
     args = parser.parse_args()
 

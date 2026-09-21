@@ -40,7 +40,7 @@ graph LR
 ## Open Questions
 
 > [!IMPORTANT]
-> 1. **Port for the API server** — defaulting to `8000`. Any preference?
+> 1. **Port for the API server** — defaulting to `8050` (to prevent conflicts with services like Splunk).
 > 2. **Authentication on endpoints** — None for V1 (local use only). Acceptable?
 > 3. **Output directory convention** — Each run creates `output/<report_slug>/report.pptx`. OK?
 
@@ -118,7 +118,7 @@ Add two new subcommands:
 
 ```
 python -m ppt_generator parse-html --input <email.html> --output <report.json> [--no-auto-charts]
-python -m ppt_generator serve [--port 8000]
+python -m ppt_generator serve [--port 8050]
 ```
 
 This avoids modifying any existing commands — purely additive.

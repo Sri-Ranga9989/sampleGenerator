@@ -190,7 +190,7 @@ python -m ppt_generator validate-pptx --input output/agf/report.pptx
 ### 5. Launch FastAPI Microservice
 Starts the production FastAPI server for HTTP-driven ingestion and presentation generation:
 ```bash
-python -m ppt_generator serve --port 8000
+python -m ppt_generator serve --port 8050
 ```
 
 ---
