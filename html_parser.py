@@ -209,9 +209,7 @@ class EmailReportParser:
         """
         print(f"[PARSE] Loading HTML file: {html_path}")
         
-        with open(html_path, "r", encoding="utf-8") as f:
-            html_content = f.read()
-        
+        html_content = self._read_html_file(html_path)
         soup = BeautifulSoup(html_content, "html.parser")
         
         # 1. Extract report title from <h1> or <title>
@@ -255,6 +253,18 @@ class EmailReportParser:
                 print(f"     ⚠ {w}")
         
         return report
+
+    def _read_html_file(self, html_path: str) -> str:
+        """Read HTML file with automatic encoding detection (UTF-8 with Windows-1252 fallback)."""
+        with open(html_path, "rb") as f:
+            raw = f.read()
+        try:
+            decoded = raw.decode("utf-8")
+            if "\ufffd" in decoded:
+                return raw.decode("windows-1252", errors="replace")
+            return decoded
+        except UnicodeDecodeError:
+            return raw.decode("windows-1252", errors="replace")
     
     def _extract_report_title(self, soup: BeautifulSoup, html_path: str) -> str:
         """Extract the main report title."""
@@ -303,128 +313,154 @@ class EmailReportParser:
         Returns:
             (sections, all_tables) where each section has headings, sub-items, tables, and text
         """
-        sections = []
+        # 1. Discover canonical sections from document headings and TOC
+        canonical_sections: Dict[int, str] = {}
+        for tag in body.find_all(["p", "h1", "h2", "h3", "h4", "div"]):
+            txt = normalize_text(tag.get_text())
+            m = re.match(r"^(\d+)\.\s+([A-Z][^0-9\n\r]+)$", txt)
+            if m and len(txt) < 100:
+                num = int(m.group(1))
+                if 1 <= num <= 60 and num not in canonical_sections:
+                    canonical_sections[num] = m.group(2).strip()
+
+        # Initialize section map
+        sections_map: Dict[int, Dict] = {}
+        for num in sorted(canonical_sections.keys()):
+            sections_map[num] = {
+                "number": str(num),
+                "title": canonical_sections[num],
+                "full_title": f"{num}. {canonical_sections[num]}",
+                "subsections": [],
+                "tables": [],
+                "insights": [],
+                "sub_headings": [],
+                "company_lists": []
+            }
+
         all_tables_collected = []
-        current_section = None
+        current_sec_num = None
         current_subsection_title = None
         table_counter = 0
-        
+
         # Walk through all direct and nested elements
         elements = list(body.descendants) if body else []
-        
-        # Track processed elements to avoid duplicates
         processed_tables = set()
-        processed_headings = set()
-        
+
         for element in elements:
             if not isinstance(element, Tag):
                 continue
-            
+
             try:
-                # === SECTION HEADINGS (h3 with numbered pattern like "1. Executive Summary") ===
-                if element.name == "h3" and id(element) not in processed_headings:
-                    text = normalize_text(element.get_text())
-                    sec_num = extract_section_number(text)
-                    
-                    if sec_num:
-                        processed_headings.add(id(element))
-                        # Save previous section
-                        if current_section:
-                            sections.append(current_section)
-                        
-                        current_section = {
-                            "number": sec_num,
-                            "title": re.sub(r'^\d+\.\s+', '', text),
-                            "full_title": text,
-                            "subsections": [],
-                            "tables": [],
-                            "insights": [],
-                            "sub_headings": [],
-                        }
-                        self.stats["sections_detected"] += 1
-                        current_subsection_title = None
-                    elif current_section:
-                        # This is a sub-heading within a section (like "3.1 Global Market Development")
-                        current_subsection_title = text
-                        current_section["sub_headings"].append(text)
-                
-                # === DATA SECTION HEADINGS (h2 with section data) ===
-                elif element.name == "h2" and id(element) not in processed_headings:
-                    text = normalize_text(element.get_text())
-                    sec_num = extract_section_number(text)
-                    if sec_num and current_section is None:
-                        processed_headings.add(id(element))
-                        current_section = {
-                            "number": sec_num,
-                            "title": re.sub(r'^\d+\.\s+', '', text),
-                            "full_title": text,
-                            "subsections": [],
-                            "tables": [],
-                            "insights": [],
-                            "sub_headings": [],
-                        }
-                        self.stats["sections_detected"] += 1
-                    elif text and current_section:
-                        current_subsection_title = text
-                        current_section["sub_headings"].append(text)
-                
-                # === SUBSECTION LISTS (paragraphs with "1.1 xxx\n1.2 xxx") ===
-                elif element.name == "p" and current_section:
-                    text = element.get_text()
-                    sub_items = extract_subsection_items(text)
-                    if sub_items:
-                        current_section["subsections"].extend(sub_items)
-                        self.stats["subsection_items"] += len(sub_items)
-                    else:
-                        # Regular paragraph — could be insight/commentary
-                        clean_text = normalize_text(text)
-                        if clean_text and len(clean_text) > 30:
-                            current_section["insights"].append({
-                                "text": clean_text,
-                                "context": current_subsection_title or current_section.get("title", "")
+                # === SECTION & SUBSECTION HEADINGS (h1, h2, h3, h4, p) ===
+                if element.name in ["h1", "h2", "h3", "h4", "p"]:
+                    txt = normalize_text(element.get_text())
+
+                    # 1. Check for top-level section heading: e.g. "1. Executive Summary"
+                    m_sec = re.match(r"^(\d+)\.\s+([A-Z].+)$", txt)
+                    if m_sec and len(txt) < 120:
+                        sec_num = int(m_sec.group(1))
+                        cand_title = m_sec.group(2).strip()
+                        if sec_num in canonical_sections:
+                            ref = canonical_sections[sec_num].lower()
+                            cand = cand_title.lower()
+                            if ref[:10] in cand or cand[:10] in ref:
+                                current_sec_num = sec_num
+                                current_subsection_title = None
+                                continue
+
+                    # 2. Check for subsection heading: e.g. "1.1 Market Snapshot" or "35.3 Universal Pack"
+                    m_sub = re.match(r"^(\d+\.\d+(?:\.\d+)?)\s+(.+)$", txt)
+                    if m_sub and len(txt) < 120:
+                        sub_num = m_sub.group(1)
+                        sub_title = m_sub.group(2).strip()
+                        parent_sec = int(sub_num.split('.')[0])
+                        if parent_sec in canonical_sections:
+                            current_sec_num = parent_sec
+                            current_subsection_title = txt
+                            target_sec = sections_map[current_sec_num]
+                            if not any(s["number"] == sub_num for s in target_sec["subsections"]):
+                                target_sec["subsections"].append({"number": sub_num, "title": sub_title})
+                                self.stats["subsection_items"] += 1
+                            target_sec["sub_headings"].append(txt)
+                        continue
+
+                    # 3. Check for Table / Exhibit heading right before a table
+                    if (txt.startswith("Table ") or txt.startswith("Exhibit ")) and len(txt) < 120:
+                        current_subsection_title = txt
+                        continue
+
+                    # 4. Paragraph handling
+                    if element.name == "p" and current_sec_num is not None:
+                        # Check multi-line subsection blocks in paragraph
+                        lines = re.split(r"[\n\r]+|<br\s*/?>|<br>", element.get_text())
+                        found_sub = False
+                        for line in lines:
+                            line_clean = normalize_text(line)
+                            m_item = re.match(r"^(\d+\.\d+(?:\.\d+)?)\s+(.+)$", line_clean)
+                            if m_item and len(line_clean) < 120:
+                                found_sub = True
+                                sub_num = m_item.group(1)
+                                sub_title = m_item.group(2).strip()
+                                parent_sec = int(sub_num.split('.')[0])
+                                target_sec_num = parent_sec if parent_sec in canonical_sections else current_sec_num
+                                target_sec = sections_map[target_sec_num]
+                                if not any(s["number"] == sub_num for s in target_sec["subsections"]):
+                                    target_sec["subsections"].append({"number": sub_num, "title": sub_title})
+                                    self.stats["subsection_items"] += 1
+
+                        if not found_sub and len(txt) > 30 and not txt.startswith("Table "):
+                            sections_map[current_sec_num]["insights"].append({
+                                "text": txt,
+                                "context": current_subsection_title or sections_map[current_sec_num].get("title", "")
                             })
                             self.stats["insight_blocks"] += 1
-                
+
                 # === DATA TABLES ===
                 elif element.name == "table" and id(element) not in processed_tables:
                     processed_tables.add(id(element))
                     self.stats["total_html_tables"] += 1
-                    
+
                     if is_gmail_wrapper_table(element):
                         self.stats["gmail_wrappers_skipped"] += 1
                         continue
-                    
+
                     if is_data_table(element):
                         table_counter += 1
                         grid = extract_table(element)
                         table_id = f"tbl_{table_counter:02d}"
                         table_block = make_table_block(table_id, grid)
-                        
-                        # Attach title context
-                        table_block["_title"] = current_subsection_title or ""
-                        table_block["_section_num"] = current_section["number"] if current_section else "0"
-                        
-                        if current_section:
-                            current_section["tables"].append(table_block)
-                        
+
+                        table_block["_title"] = current_subsection_title or (f"Table {table_counter}" if not current_subsection_title else "")
+                        table_block["_section_num"] = str(current_sec_num) if current_sec_num else "0"
+
+                        if current_sec_num and current_sec_num in sections_map:
+                            sections_map[current_sec_num]["tables"].append(table_block)
+
                         all_tables_collected.append(table_block)
                         self.stats["data_tables"] += 1
-                
+
                 # === COMPANY LISTS (ul with li items) ===
-                elif element.name == "ul" and current_section:
+                elif element.name == "ul" and current_sec_num is not None:
                     companies = extract_company_list(element)
                     if companies and len(companies) >= 3:
-                        current_section.setdefault("company_lists", []).append(companies)
+                        sections_map[current_sec_num].setdefault("company_lists", []).append(companies)
                         self.stats["company_lists"] += 1
-                
+
             except Exception as e:
                 self.warnings.append(f"Error processing element <{getattr(element, 'name', '?')}>: {str(e)[:100]}")
                 continue
-        
-        # Don't forget the last section
-        if current_section:
-            sections.append(current_section)
-        
+
+        # Filter active sections (keep those with content or tables)
+        if sections_map:
+            active_sections = [
+                s for s in sections_map.values()
+                if s["subsections"] or s["tables"] or s["insights"] or s["company_lists"]
+            ]
+            sections = active_sections if active_sections else list(sections_map.values())
+        else:
+            sections = []
+
+        self.stats["sections_detected"] = len(sections)
         return sections, all_tables_collected
     
     def _build_slides(
@@ -692,33 +728,40 @@ class EmailReportParser:
         
         # ─── Company Lists ───────────────────────────────────────────
         for cl_idx, companies in enumerate(company_lists):
-            slides.append({
-                "template_id": "05_insight_information",
-                "slide_index": len(slides),
-                "data": {
-                    "title": f"{sec_title} — Company Profiles",
-                    "left_column": [
-                        {
-                            "type": "bullet_list",
-                            "id": f"cl_{sec_num}_{cl_idx}_l",
-                            "items": [
-                                {"id": f"cl_{sec_num}_{cl_idx}_l_{i}", "text": c, "level": 0}
-                                for i, c in enumerate(companies[:len(companies)//2 + 1])
-                            ]
-                        }
-                    ],
-                    "right_column": [
-                        {
-                            "type": "bullet_list",
-                            "id": f"cl_{sec_num}_{cl_idx}_r",
-                            "items": [
-                                {"id": f"cl_{sec_num}_{cl_idx}_r_{i}", "text": c, "level": 0}
-                                for i, c in enumerate(companies[len(companies)//2 + 1:])
-                            ]
-                        }
-                    ]
-                }
-            })
+            chunk_size = 16
+            for chunk_i in range(0, len(companies), chunk_size):
+                chunk = companies[chunk_i:chunk_i + chunk_size]
+                part_suffix = f" (Part {chunk_i // chunk_size + 1})" if len(companies) > chunk_size else ""
+                mid = (len(chunk) + 1) // 2
+                left_chunk = chunk[:mid]
+                right_chunk = chunk[mid:]
+                slides.append({
+                    "template_id": "05_insight_information",
+                    "slide_index": len(slides),
+                    "data": {
+                        "title": f"{sec_title} — Key Profiles & Ecosystem{part_suffix}",
+                        "left_column": [
+                            {
+                                "type": "bullet_list",
+                                "id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_l",
+                                "items": [
+                                    {"id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_l_{i}", "text": c, "level": 0}
+                                    for i, c in enumerate(left_chunk)
+                                ]
+                            }
+                        ],
+                        "right_column": [
+                            {
+                                "type": "bullet_list",
+                                "id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_r",
+                                "items": [
+                                    {"id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_r_{i}", "text": c, "level": 0}
+                                    for i, c in enumerate(right_chunk)
+                                ]
+                            }
+                        ]
+                    }
+                })
 
 
 def parse_html_to_json(

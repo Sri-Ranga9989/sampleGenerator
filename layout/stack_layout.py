@@ -105,6 +105,41 @@ class StackLayoutEngine:
 
         for idx, block in enumerate(blocks):
             b_type, b_h, b_fsize, b_id = StackLayoutEngine._measure_block(block, width, font_name)
+
+            # If a bullet list overflows, split its items across pages instead of overflowing
+            if isinstance(block, BulletListBlock) and len(block.items) > 1 and (curr_y + b_h - start_y > available_height + 0.5):
+                fit_items = []
+                rem_items = []
+                item_y = curr_y
+                for it in block.items:
+                    indent = it.level * 16.0
+                    meas = measure_multiline_text(it.text, font_name, 11, max(20.0, width - indent - 20.0), line_spacing=1.15)
+                    it_h = meas["height"] + 6.0
+                    if (item_y + it_h - start_y <= available_height + 0.5) or len(fit_items) == 0:
+                        fit_items.append(it)
+                        item_y += it_h
+                    else:
+                        rem_items.append(it)
+                if fit_items:
+                    fit_b = BulletListBlock(id=block.id, type="bullet_list", items=fit_items)
+                    _, fit_h, fit_f, fit_id = StackLayoutEngine._measure_block(fit_b, width, font_name)
+                    fitting_blocks.append(StackedBlockLayout(
+                        block_id=fit_id,
+                        block_type="bullet_list",
+                        x=x,
+                        y=curr_y,
+                        width=width,
+                        height=fit_h,
+                        font_size=fit_f,
+                        data=fit_b,
+                        fits=True
+                    ))
+                    curr_y += fit_h + minimum_gap
+                if rem_items:
+                    rem_b = BulletListBlock(id=f"{block.id}_cont", type="bullet_list", items=rem_items)
+                    overflow_blocks.append(rem_b)
+                continue
+
             can_fit = ((curr_y + b_h - start_y) <= available_height + 0.5) or (len(fitting_blocks) == 0)
             if can_fit:
                 fitting_blocks.append(StackedBlockLayout(
