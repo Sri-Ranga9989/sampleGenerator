@@ -208,6 +208,59 @@ def compare_cmd(args):
         print(f"  -> Diff Image: {res['diff_image_path']}")
 
 
+def parse_html_cmd(args):
+    """Parses a Gmail HTML email into a canonical JSON manifest."""
+    from html_parser import parse_html_to_json
+
+    input_path = args.input
+    output_path = args.output
+    auto_charts = not args.no_auto_charts
+
+    if not os.path.exists(input_path):
+        print(f"[ERROR] Input file not found: {input_path}")
+        sys.exit(1)
+
+    # Default output path
+    if not output_path:
+        base = os.path.splitext(os.path.basename(input_path))[0]
+        slug = base.lower().replace(" ", "_")[:40]
+        output_path = os.path.join("output", slug, "report.json")
+
+    print(f"\n=======================================================")
+    print(f"PPT GENERATOR V1 — HTML EMAIL PARSING PIPELINE")
+    print(f"=======================================================")
+
+    report, stats, warnings = parse_html_to_json(
+        input_path, output_path, auto_charts=auto_charts
+    )
+
+    print(f"\n[RESULT] JSON manifest saved: {output_path}")
+    print(f"  -> Slides: {len(report.get('slides', []))}")
+    print(f"  -> Tables: {stats.get('data_tables', 0)}")
+    print(f"  -> Charts: {stats.get('charts_generated', 0)}")
+    print(f"  -> Warnings: {len(warnings)}")
+    print(f"=======================================================\n")
+
+
+def serve_cmd(args):
+    """Starts the FastAPI server for the PPT Generator API."""
+    try:
+        import uvicorn
+    except ImportError:
+        print("[ERROR] uvicorn is not installed. Run: pip install uvicorn fastapi python-multipart")
+        sys.exit(1)
+
+    port = args.port
+    print(f"\n=======================================================")
+    print(f"PPT GENERATOR V1 — API SERVER")
+    print(f"=======================================================")
+    print(f"Starting server on http://0.0.0.0:{port}")
+    print(f"API docs at http://localhost:{port}/docs")
+    print(f"=======================================================\n")
+
+    uvicorn.run("api_server:app", host="0.0.0.0", port=port, reload=False)
+
+
 def main():
     parser = argparse.ArgumentParser(description="PPT Generator V1 Command Line Interface")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -237,6 +290,16 @@ def main():
     p_cmp.add_argument("--reference", required=True, help="Path to reference PNG")
     p_cmp.add_argument("--generated", required=True, help="Path to generated PNG")
 
+    # parse-html (NEW)
+    p_parse = subparsers.add_parser("parse-html", help="Parse Gmail HTML email into canonical JSON manifest")
+    p_parse.add_argument("--input", required=True, help="Path to Gmail HTML email file")
+    p_parse.add_argument("--output", default=None, help="Path to output JSON manifest")
+    p_parse.add_argument("--no-auto-charts", action="store_true", help="Disable automatic chart generation")
+
+    # serve (NEW)
+    p_serve = subparsers.add_parser("serve", help="Start FastAPI server for PPT Generator API")
+    p_serve.add_argument("--port", type=int, default=8000, help="Server port (default: 8000)")
+
     args = parser.parse_args()
 
     if args.command == "validate-input":
@@ -249,6 +312,10 @@ def main():
         generate_cmd(args)
     elif args.command == "compare":
         compare_cmd(args)
+    elif args.command == "parse-html":
+        parse_html_cmd(args)
+    elif args.command == "serve":
+        serve_cmd(args)
     else:
         parser.print_help()
 

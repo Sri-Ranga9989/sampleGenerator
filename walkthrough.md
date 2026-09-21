@@ -127,3 +127,50 @@ python -m ppt_generator render-template --template-id 04_table_chart --input exa
 python -m ppt_generator compare --reference assets/templates/mining_ugv/reference/01_cover_title_image.png --generated assets/templates/mining_ugv/rendered/01_cover_title_image.png
 # Result: Status: SKIPPED (Mandate 1 satisfied: returns SKIPPED when reference PNG absent)
 ```
+
+---
+
+## 5. Automated HTML Email Pipeline & Auto-Chart Generation
+
+The pipeline was verified on the **Automated Guided Forklifts Market** Gmail export (`Gmail - Fwd_ Automated Guided Forklifts Market.html`), demonstrating complete automated ingestion:
+
+```text
+=======================================================
+PPT GENERATOR V1 — HTML EMAIL PARSING PIPELINE
+=======================================================
+[PARSE] Loading HTML file: Gmail - Fwd_ Automated Guided Forklifts Market.html
+[PARSE] Report title: Automated Guided Forklifts Market
+
+[PARSE] === Parsing Complete ===
+  -> Sections detected: 37
+  -> Data tables extracted: 40
+  -> Charts auto-generated: 29
+  -> Total slides: 81
+  -> Warnings: 0
+
+[RESULT] JSON manifest saved: output/agf_test/report.json
+  -> Slides: 81
+  -> Tables: 40
+  -> Charts: 29
+  -> Warnings: 0
+=======================================================
+```
+
+### Presentation Synthesis & Validation Metrics:
+- **Input Manifest:** 81 slides, 2,551 content items registered
+- **Output Slides:** 83 slides generated (accommodating dynamic table splitting and continuation slides)
+- **Structural Integrity:** PASS (0 errors)
+- **Content Completeness:** PASS (2,551 / 2,551 rendered, 0 missing — 100.0% completeness)
+- **Auto-Chart Generation:** 29 graph-worthy tables identified; charts automatically injected immediately after data tables with appropriate chart type selection (line charts for time-series, clustered column / bar for comparisons).
+
+---
+
+## 6. FastAPI REST API Verification
+
+The FastAPI microservice (`api_server.py`) was verified via `pytest` (`tests/test_email_pipeline.py`) across all endpoints:
+
+1. **`GET /health`:** Returns service health status and UTC ISO timestamp (`200 OK`).
+2. **`POST /parse`:** Accepts `multipart/form-data` HTML file upload, extracts all 37 sections and 40 tables, outputs canonical JSON manifest with statistics (`200 OK`).
+3. **`POST /generate`:** Accepts JSON manifest upload, compiles layout and generates `.pptx` download with validation headers (`200 OK`).
+4. **`POST /pipeline`:** End-to-end endpoint accepting HTML upload, executing parsing, layout synthesis, presentation construction, and returning the completed 83-slide PowerPoint file (`200 OK`, `x-structural-status: PASS`, `x-completeness-status: PASS`).
+

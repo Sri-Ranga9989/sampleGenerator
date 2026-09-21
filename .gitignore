@@ -29,12 +29,12 @@ htmlcov/
 *.swp
 *.swo
 
-# Output PPTX and rasterized slides can be retained or gitignored as needed; keep folder structure
-output/*.pptx
-output/**/*.pptx
-output/rendered/
+# Output directories and generated presentations
+output/*
+!output/.gitkeep
 
 # Scratch and intermediate dumps
 email_content_dump.txt
 tables_summary.txt
 *.tmp
+

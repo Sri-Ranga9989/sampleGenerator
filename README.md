@@ -3,7 +3,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](https://www.python.org/)
-[![Tests: 19/19 Passing](https://img.shields.io/badge/Tests-19%2F19%20Passing-success.svg)](tests/)
+[![Tests: 28/28 Passing](https://img.shields.io/badge/Tests-28%2F28%20Passing-success.svg)](tests/)
 [![Format: ECMA--376 PPTX](https://img.shields.io/badge/Format-ECMA--376%20PPTX-orange.svg)](output/)
 [![Quality: Consulting--Grade](https://img.shields.io/badge/Standard-Tier--1%20Strategy-navy.svg)](README.md)
 
@@ -123,8 +123,12 @@ sampleGenerator/
 │   ├── template.schema.json
 │   └── template_registry.json
 ├── tests/
-│   └── test_stress_cases.py             # 19 comprehensive stress & edge-case test suites
-├── build_email_report_json.py           # Ingestion pipeline: HTML email -> Canonical JSON
+│   ├── test_stress_cases.py             # 19 comprehensive stress & edge-case test suites
+│   └── test_email_pipeline.py           # HTML email parser, chart analyzer & API tests
+├── html_parser.py                       # Generic fault-tolerant Gmail HTML email parser
+├── chart_analyzer.py                    # Table graph-worthiness detection & auto-chart generator
+├── api_server.py                        # FastAPI REST API server (/parse, /generate, /pipeline)
+├── build_email_report_json.py           # Mining UGV specific ingestion script
 ├── pyproject.toml                       # Build system & package metadata
 ├── requirements.txt                     # Production & development dependencies
 └── LICENSE                              # MIT License
@@ -156,31 +160,51 @@ pip install -r requirements.txt
 
 ## CLI Usage Guide
 
-PPT Generator V1 provides a unified command-line tool:
+PPT Generator V1 provides a unified command-line tool with built-in HTML ingestion and server capabilities:
 
-### 1. Validate Input Manifest
+### 1. Ingest & Parse Arbitrary Gmail HTML Email
+Parses market-research Gmail HTML exports, extracts all sections and tables into canonical JSON, and auto-detects graph-worthy tables:
+```bash
+python -m ppt_generator parse-html --input "Gmail - Fwd_ Automated Guided Forklifts Market.html" --output output/agf/report.json
+```
+Use `--no-auto-charts` to disable automatic chart generation.
+
+### 2. Validate Input Manifest
 Validates input JSON schema adherence and Canonical Data Model integrity:
 ```bash
 python -m ppt_generator validate-input --input examples/mining_ugv_email_report.json
 ```
 
-### 2. Generate Presentation Deck
+### 3. Generate Presentation Deck
 Executes the full 5-phase pipeline: Layout Computation $\rightarrow$ PPTX Generation $\rightarrow$ Layer A Structural Validation $\rightarrow$ Provenance Completeness Check $\rightarrow$ Headless COM Slide Rasterization:
 ```bash
-python -m ppt_generator generate --input examples/mining_ugv_email_report.json --output output/mining_ugv_final_presentation.pptx
+python -m ppt_generator generate --input output/agf/report.json --output output/agf/report.pptx --no-rasterize
 ```
 
-### 3. Validate PPTX Presentation Structure
+### 4. Validate PPTX Presentation Structure
 Inspects generated `.pptx` decks for shape boundary compliance, font size clamps, and layout violations:
 ```bash
-python -m ppt_generator validate-pptx --input output/mining_ugv_final_presentation.pptx
+python -m ppt_generator validate-pptx --input output/agf/report.pptx
 ```
 
-### 4. Render Single Template
-Isolates and renders a single template archetype with test payloads:
+### 5. Launch FastAPI Microservice
+Starts the production FastAPI server for HTTP-driven ingestion and presentation generation:
 ```bash
-python -m ppt_generator render-template --template-id 04_table_chart --input examples/mining_ugv_report.json --output output/test_template_04.pptx
+python -m ppt_generator serve --port 8000
 ```
+
+---
+
+## REST API Endpoints
+
+The API server (`api_server.py`) provides three primary endpoints:
+
+| Endpoint | Method | Input | Output / Description |
+|:---|:---|:---|:---|
+| `/parse` | `POST` | `multipart/form-data` (HTML file) | Returns canonical JSON manifest with parsing statistics |
+| `/generate` | `POST` | `multipart/form-data` (JSON file) | Generates and downloads native `.pptx` presentation |
+| `/pipeline` | `POST` | `multipart/form-data` (HTML file) | Full end-to-end: HTML upload $\rightarrow$ PPTX download |
+| `/health` | `GET` | None | Service health status and timestamp |
 
 ---
 
