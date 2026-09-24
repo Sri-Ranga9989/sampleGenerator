@@ -134,7 +134,7 @@ class PowerPointRenderer:
                 y=comp.y,
                 width=comp.width,
                 height=comp.height,
-                font_size_pt=comp.font_size or (16.0 if is_heading else 11.0),
+                font_size_pt=comp.font_size or (18.0 if is_heading else 10.0),
                 bold=bold,
                 color_hex=color_hex,
                 alignment=align,
@@ -171,7 +171,7 @@ class PowerPointRenderer:
                 y=comp.y,
                 width=comp.width,
                 height=comp.height,
-                font_size=comp.font_size or 11.0
+                font_size=comp.font_size or 10.0
             )
 
         elif c_type == "table":

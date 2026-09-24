@@ -334,7 +334,8 @@ class EmailReportParser:
                 "tables": [],
                 "insights": [],
                 "sub_headings": [],
-                "company_lists": []
+                "company_lists": [],
+                "content_flow": []
             }
 
         all_tables_collected = []
@@ -382,6 +383,7 @@ class EmailReportParser:
                                 target_sec["subsections"].append({"number": sub_num, "title": sub_title})
                                 self.stats["subsection_items"] += 1
                             target_sec["sub_headings"].append(txt)
+                            target_sec["content_flow"].append({"kind": "subsection", "number": sub_num, "title": sub_title, "full_text": txt})
                         continue
 
                     # 3. Check for Table / Exhibit heading right before a table
@@ -407,9 +409,15 @@ class EmailReportParser:
                                 if not any(s["number"] == sub_num for s in target_sec["subsections"]):
                                     target_sec["subsections"].append({"number": sub_num, "title": sub_title})
                                     self.stats["subsection_items"] += 1
+                                target_sec["content_flow"].append({"kind": "subsection", "number": sub_num, "title": sub_title, "full_text": line_clean})
 
                         if not found_sub and len(txt) > 30 and not txt.startswith("Table "):
                             sections_map[current_sec_num]["insights"].append({
+                                "text": txt,
+                                "context": current_subsection_title or sections_map[current_sec_num].get("title", "")
+                            })
+                            sections_map[current_sec_num]["content_flow"].append({
+                                "kind": "insight",
                                 "text": txt,
                                 "context": current_subsection_title or sections_map[current_sec_num].get("title", "")
                             })
@@ -435,6 +443,10 @@ class EmailReportParser:
 
                         if current_sec_num and current_sec_num in sections_map:
                             sections_map[current_sec_num]["tables"].append(table_block)
+                            sections_map[current_sec_num]["content_flow"].append({
+                                "kind": "table",
+                                "table": table_block
+                            })
 
                         all_tables_collected.append(table_block)
                         self.stats["data_tables"] += 1
@@ -444,6 +456,10 @@ class EmailReportParser:
                     companies = extract_company_list(element)
                     if companies and len(companies) >= 3:
                         sections_map[current_sec_num].setdefault("company_lists", []).append(companies)
+                        sections_map[current_sec_num].setdefault("content_flow", []).append({
+                            "kind": "company_list",
+                            "companies": companies
+                        })
                         self.stats["company_lists"] += 1
 
             except Exception as e:
@@ -547,7 +563,7 @@ class EmailReportParser:
         
         # ─── Section Opener ──────────────────────────────────────────
         index_items = []
-        for sub in subsections[:12]:  # Limit to 12 for the opener
+        for sub in subsections:  # Include ALL subsections! No [:12] limit
             index_items.append({
                 "id": f"sub_{slugify(sub['number'])}",
                 "number": sub["number"],
@@ -563,205 +579,389 @@ class EmailReportParser:
             }
         })
         
-        # ─── Table Slides ────────────────────────────────────────────
-        # Strategy: 
-        #   - Single table → 06_large_table
-        #   - Two adjacent tables with insights → 08_multi_table_dashboard_2col
-        #   - Table + auto-chart → 04_table_chart
-        
-        table_queue = list(tables)
-        insight_queue = list(insights)
-        
-        while table_queue:
-            table = table_queue.pop(0)
-            table_title = table.get("_title", "") or f"Section {sec_num} Data"
-            table_id = table["id"]
+        # ─── Sequential Content Processing ───────────────────────────
+        content_flow = section.get("content_flow", [])
+        if content_flow:
+            flow_queue = list(content_flow)
+            while flow_queue:
+                item = flow_queue.pop(0)
+                kind = item.get("kind")
+
+                if kind == "table":
+                    table = item["table"]
+                    table_title = table.get("_title", "") or f"Section {sec_num} Data"
+                    table_id = table["id"]
+
+                    # Check if immediately following item is an insight for this table
+                    insight_text = ""
+                    if flow_queue and flow_queue[0].get("kind") == "insight":
+                        ins = flow_queue.pop(0)
+                        insight_text = ins.get("text", "")
+
+                    # Check for auto-chart
+                    chart_block = None
+                    if self.auto_charts:
+                        headers = table.get("headers", [])
+                        raw_rows = table.get("rows", [])
+                        flat_rows = []
+                        for row in raw_rows:
+                            if isinstance(row, dict):
+                                cells = row.get("cells", [])
+                                flat_rows.append([str(c.get("value", "")) if isinstance(c, dict) else str(c) for c in cells])
+                            elif isinstance(row, list):
+                                flat_rows.append([str(c) for c in row])
+                        chart_block = analyze_table_for_chart(table_id, headers, flat_rows, table_title)
+
+                    # 1. Compact table + auto-chart -> 04_table_chart
+                    if chart_block and len(table.get("rows", [])) <= 12:
+                        clean_table = {k: v for k, v in table.items() if not k.startswith("_")}
+                        slides.append({
+                            "template_id": "04_table_chart",
+                            "slide_index": len(slides),
+                            "data": {
+                                "context_note": f"{sec_num}. {sec_title}" if sec_title and f"{sec_num}. {sec_title}" != table_title else "Market Dynamics & Performance Overview",
+                                "chart": chart_block,
+                                "heading": table_title,
+                                "narrative": insight_text[:300] if insight_text else f"Key data metrics from {table_title}",
+                                "table": clean_table,
+                                "insight": {
+                                    "type": "insight",
+                                    "id": f"ins_{table_id}",
+                                    "title": "KEY INSIGHT",
+                                    "body": insight_text[:200] if insight_text else f"Data analysis from {table_title}"
+                                }
+                            }
+                        })
+                        self.stats["charts_generated"] += 1
+
+                    # 2. Adjacent compact tables -> 08_multi_table_dashboard_2col
+                    # Only pair if BOTH tables are genuinely small (<= 5 rows, <= 4 columns)
+                    elif (flow_queue and flow_queue[0].get("kind") == "table" and
+                          len(table.get("rows", [])) <= 5 and len(flow_queue[0]["table"].get("rows", [])) <= 5 and
+                          len(table.get("headers", [])) <= 4 and len(flow_queue[0]["table"].get("headers", [])) <= 4):
+                        table2 = flow_queue.pop(0)["table"]
+                        table2_title = table2.get("_title", "") or "Additional Data"
+
+                        insight2_text = ""
+                        if flow_queue and flow_queue[0].get("kind") == "insight":
+                            ins2 = flow_queue.pop(0)
+                            insight2_text = ins2.get("text", "")
+
+                        left_blocks = [
+                            {"type": "text", "id": f"h_{table_id}", "role": "heading", "text": table_title},
+                            {k: v for k, v in table.items() if not k.startswith("_")},
+                        ]
+                        right_blocks = [
+                            {"type": "text", "id": f"h_{table2['id']}", "role": "heading", "text": table2_title},
+                            {k: v for k, v in table2.items() if not k.startswith("_")},
+                        ]
+                        if insight_text:
+                            left_blocks.append({
+                                "type": "insight",
+                                "id": f"ins_{table_id}",
+                                "title": "Key Finding",
+                                "body": insight_text[:200]
+                            })
+                        if insight2_text:
+                            right_blocks.append({
+                                "type": "insight",
+                                "id": f"ins_{table2['id']}",
+                                "title": "Key Finding",
+                                "body": insight2_text[:200]
+                            })
+
+                        slides.append({
+                            "template_id": "08_multi_table_dashboard_2col",
+                            "slide_index": len(slides),
+                            "data": {
+                                "title": f"{table_title} & {table2_title}",
+                                "left_column": left_blocks,
+                                "right_column": right_blocks
+                            }
+                        })
+                        if chart_block:
+                            slides.append({
+                                "template_id": "07_large_chart",
+                                "slide_index": len(slides),
+                                "data": {
+                                    "title": chart_block.get("title", "Data Visualization"),
+                                    "chart": chart_block
+                                }
+                            })
+                            self.stats["charts_generated"] += 1
+
+                    # 3. Single large table -> 06_large_table
+                    else:
+                        clean_table = {k: v for k, v in table.items() if not k.startswith("_")}
+                        slides.append({
+                            "template_id": "06_large_table",
+                            "slide_index": len(slides),
+                            "data": {
+                                "title": table_title,
+                                "table": clean_table
+                            }
+                        })
+                        if chart_block:
+                            slides.append({
+                                "template_id": "07_large_chart",
+                                "slide_index": len(slides),
+                                "data": {
+                                    "title": chart_block.get("title", "Data Visualization"),
+                                    "chart": chart_block
+                                }
+                            })
+                            self.stats["charts_generated"] += 1
+
+                elif kind == "insight":
+                    # Standalone narrative insight block: gather consecutive insights
+                    insight_batch = [item]
+                    while flow_queue and flow_queue[0].get("kind") == "insight":
+                        insight_batch.append(flow_queue.pop(0))
+
+                    left_items = []
+                    right_items = []
+                    for idx, ins in enumerate(insight_batch[:6]):
+                        target = left_items if idx % 2 == 0 else right_items
+                        target.append({
+                            "type": "text",
+                            "id": f"t_{sec_num}_ins_{len(slides)}_{idx}",
+                            "role": "paragraph",
+                            "text": ins.get("text", "")
+                        })
+
+                    if left_items or right_items:
+                        slides.append({
+                            "template_id": "05_insight_information",
+                            "slide_index": len(slides),
+                            "data": {
+                                "title": f"{sec_title} — Strategic Insights",
+                                "left_column": left_items if left_items else [{"type": "text", "id": f"t_{sec_num}_empty_l", "role": "paragraph", "text": "See data tables for detailed analysis."}],
+                                "right_column": right_items if right_items else [{"type": "text", "id": f"t_{sec_num}_empty_r", "role": "paragraph", "text": "Additional intelligence available in supplementary data."}]
+                            }
+                        })
+
+                elif kind == "company_list":
+                    companies = item.get("companies", [])
+                    chunk_size = 16
+                    for chunk_i in range(0, len(companies), chunk_size):
+                        chunk = companies[chunk_i:chunk_i + chunk_size]
+                        part_suffix = f" (Part {chunk_i // chunk_size + 1})" if len(companies) > chunk_size else ""
+                        mid = (len(chunk) + 1) // 2
+                        left_chunk = chunk[:mid]
+                        right_chunk = chunk[mid:]
+                        slides.append({
+                            "template_id": "05_insight_information",
+                            "slide_index": len(slides),
+                            "data": {
+                                "title": f"{sec_title} — Key Profiles & Ecosystem{part_suffix}",
+                                "left_column": [
+                                    {
+                                        "type": "bullet_list",
+                                        "id": f"cl_{sec_num}_{chunk_i}_l",
+                                        "items": [
+                                            {"id": f"cl_{sec_num}_{chunk_i}_l_{i}", "text": c, "level": 0}
+                                            for i, c in enumerate(left_chunk)
+                                        ]
+                                    }
+                                ],
+                                "right_column": [
+                                    {
+                                        "type": "bullet_list",
+                                        "id": f"cl_{sec_num}_{chunk_i}_r",
+                                        "items": [
+                                            {"id": f"cl_{sec_num}_{chunk_i}_r_{i}", "text": c, "level": 0}
+                                            for i, c in enumerate(right_chunk)
+                                        ]
+                                    }
+                                ]
+                            }
+                        })
+
+        else:
+            # ─── Fallback: Queue-based table and insight processing ───
+            table_queue = list(tables)
+            insight_queue = list(insights)
             
-            # Check for auto-chart
-            chart_block = None
-            if self.auto_charts:
-                headers = table.get("headers", [])
-                raw_rows = table.get("rows", [])
-                flat_rows = []
-                for row in raw_rows:
-                    if isinstance(row, dict):
-                        cells = row.get("cells", [])
-                        flat_rows.append([str(c.get("value", "")) if isinstance(c, dict) else str(c) for c in cells])
-                    elif isinstance(row, list):
-                        flat_rows.append([str(c) for c in row])
+            while table_queue:
+                table = table_queue.pop(0)
+                table_title = table.get("_title", "") or f"Section {sec_num} Data"
+                table_id = table["id"]
                 
-                chart_block = analyze_table_for_chart(table_id, headers, flat_rows, table_title)
-            
-            if chart_block and len(table.get("rows", [])) <= 12:
-                # ─── Table + Chart slide (04_table_chart) ────────────
-                insight_text = ""
-                if insight_queue:
-                    ins = insight_queue.pop(0)
-                    insight_text = ins["text"]
+                # Check for auto-chart
+                chart_block = None
+                if self.auto_charts:
+                    headers = table.get("headers", [])
+                    raw_rows = table.get("rows", [])
+                    flat_rows = []
+                    for row in raw_rows:
+                        if isinstance(row, dict):
+                            cells = row.get("cells", [])
+                            flat_rows.append([str(c.get("value", "")) if isinstance(c, dict) else str(c) for c in cells])
+                        elif isinstance(row, list):
+                            flat_rows.append([str(c) for c in row])
+                    
+                    chart_block = analyze_table_for_chart(table_id, headers, flat_rows, table_title)
                 
-                # Clean table block (remove internal metadata)
-                clean_table = {k: v for k, v in table.items() if not k.startswith("_")}
+                if chart_block and len(table.get("rows", [])) <= 12:
+                    insight_text = ""
+                    if insight_queue:
+                        ins = insight_queue.pop(0)
+                        insight_text = ins["text"]
+                    
+                    clean_table = {k: v for k, v in table.items() if not k.startswith("_")}
+                    
+                    slides.append({
+                        "template_id": "04_table_chart",
+                        "slide_index": len(slides),
+                        "data": {
+                            "context_note": f"{sec_num}. {sec_title}" if sec_title and f"{sec_num}. {sec_title}" != table_title else "Market Dynamics & Performance Overview",
+                            "chart": chart_block,
+                            "heading": table_title,
+                            "narrative": insight_text[:300] if insight_text else f"Key data metrics from {table_title}",
+                            "table": clean_table,
+                            "insight": {
+                                "type": "insight",
+                                "id": f"ins_{table_id}",
+                                "title": "KEY INSIGHT",
+                                "body": insight_text[:200] if insight_text else f"Data analysis from {table_title}"
+                            }
+                        }
+                    })
+                    self.stats["charts_generated"] += 1
                 
-                slides.append({
-                    "template_id": "04_table_chart",
-                    "slide_index": len(slides),
-                    "data": {
-                        "context_note": table_title,
-                        "chart": chart_block,
-                        "heading": table_title,
-                        "narrative": insight_text[:300] if insight_text else f"Key data metrics from {table_title}",
-                        "table": clean_table,
-                        "insight": {
+                elif (table_queue and len(table.get("rows", [])) <= 5 and len(table_queue[0].get("rows", [])) <= 5 and
+                      len(table.get("headers", [])) <= 4 and len(table_queue[0].get("headers", [])) <= 4):
+                    table2 = table_queue.pop(0)
+                    table2_title = table2.get("_title", "") or "Additional Data"
+                    
+                    left_blocks = [
+                        {"type": "text", "id": f"h_{table_id}", "role": "heading", "text": table_title},
+                        {k: v for k, v in table.items() if not k.startswith("_")},
+                    ]
+                    right_blocks = [
+                        {"type": "text", "id": f"h_{table2['id']}", "role": "heading", "text": table2_title},
+                        {k: v for k, v in table2.items() if not k.startswith("_")},
+                    ]
+                    
+                    if insight_queue:
+                        ins = insight_queue.pop(0)
+                        left_blocks.append({
                             "type": "insight",
                             "id": f"ins_{table_id}",
-                            "title": "KEY INSIGHT",
-                            "body": insight_text[:200] if insight_text else f"Data analysis from {table_title}"
-                        }
-                    }
-                })
-                self.stats["charts_generated"] += 1
-            
-            elif table_queue and len(table.get("rows", [])) <= 10 and len(table_queue[0].get("rows", [])) <= 10:
-                # ─── Dashboard: pair two small tables (08_multi_table_dashboard_2col) ──
-                table2 = table_queue.pop(0)
-                table2_title = table2.get("_title", "") or "Additional Data"
-                
-                left_blocks = [
-                    {"type": "text", "id": f"h_{table_id}", "role": "heading", "text": table_title},
-                    {k: v for k, v in table.items() if not k.startswith("_")},
-                ]
-                right_blocks = [
-                    {"type": "text", "id": f"h_{table2['id']}", "role": "heading", "text": table2_title},
-                    {k: v for k, v in table2.items() if not k.startswith("_")},
-                ]
-                
-                # Add insights if available
-                if insight_queue:
-                    ins = insight_queue.pop(0)
-                    left_blocks.append({
-                        "type": "insight",
-                        "id": f"ins_{table_id}",
-                        "title": "Key Finding",
-                        "body": ins["text"][:200]
-                    })
-                if insight_queue:
-                    ins = insight_queue.pop(0)
-                    right_blocks.append({
-                        "type": "insight",
-                        "id": f"ins_{table2['id']}",
-                        "title": "Key Finding",
-                        "body": ins["text"][:200]
-                    })
-                
-                slides.append({
-                    "template_id": "08_multi_table_dashboard_2col",
-                    "slide_index": len(slides),
-                    "data": {
-                        "title": f"{table_title} & {table2_title}",
-                        "left_column": left_blocks,
-                        "right_column": right_blocks
-                    }
-                })
-                
-                # Auto-chart for first table of the pair if applicable
-                if chart_block:
+                            "title": "Key Finding",
+                            "body": ins["text"][:200]
+                        })
+                    if insight_queue:
+                        ins = insight_queue.pop(0)
+                        right_blocks.append({
+                            "type": "insight",
+                            "id": f"ins_{table2['id']}",
+                            "title": "Key Finding",
+                            "body": ins["text"][:200]
+                        })
+                    
                     slides.append({
-                        "template_id": "07_large_chart",
+                        "template_id": "08_multi_table_dashboard_2col",
                         "slide_index": len(slides),
                         "data": {
-                            "title": chart_block.get("title", "Data Visualization"),
-                            "chart": chart_block
+                            "title": f"{table_title} & {table2_title}",
+                            "left_column": left_blocks,
+                            "right_column": right_blocks
                         }
                     })
-                    self.stats["charts_generated"] += 1
-            
-            else:
-                # ─── Large Table slide (06_large_table) ──────────────
-                clean_table = {k: v for k, v in table.items() if not k.startswith("_")}
+                    
+                    if chart_block:
+                        slides.append({
+                            "template_id": "07_large_chart",
+                            "slide_index": len(slides),
+                            "data": {
+                                "title": chart_block.get("title", "Data Visualization"),
+                                "chart": chart_block
+                            }
+                        })
+                        self.stats["charts_generated"] += 1
                 
-                slides.append({
-                    "template_id": "06_large_table",
-                    "slide_index": len(slides),
-                    "data": {
-                        "title": table_title,
-                        "table": clean_table
-                    }
-                })
-                
-                # Auto-chart after the table
-                if chart_block:
+                else:
+                    clean_table = {k: v for k, v in table.items() if not k.startswith("_")}
                     slides.append({
-                        "template_id": "07_large_chart",
+                        "template_id": "06_large_table",
                         "slide_index": len(slides),
                         "data": {
-                            "title": chart_block.get("title", "Data Visualization"),
-                            "chart": chart_block
+                            "title": table_title,
+                            "table": clean_table
                         }
                     })
-                    self.stats["charts_generated"] += 1
-        
-        # ─── Remaining Insights (if no tables consumed them) ─────────
-        if insight_queue and len(insight_queue) >= 2:
-            # Build an insight information slide
-            left_items = []
-            right_items = []
-            
-            for i, ins in enumerate(insight_queue[:6]):
-                target = left_items if i % 2 == 0 else right_items
-                target.append({
-                    "type": "text",
-                    "id": f"t_{sec_num}_ins_{i}",
-                    "role": "paragraph",
-                    "text": ins["text"]
-                })
-            
-            if left_items or right_items:
-                slides.append({
-                    "template_id": "05_insight_information",
-                    "slide_index": len(slides),
-                    "data": {
-                        "title": f"{sec_title} — Key Findings",
-                        "left_column": left_items if left_items else [{"type": "text", "id": f"t_{sec_num}_empty_l", "role": "paragraph", "text": "See data tables for detailed analysis."}],
-                        "right_column": right_items if right_items else [{"type": "text", "id": f"t_{sec_num}_empty_r", "role": "paragraph", "text": "Additional intelligence available in supplementary data."}]
-                    }
-                })
-        
-        # ─── Company Lists ───────────────────────────────────────────
-        for cl_idx, companies in enumerate(company_lists):
-            chunk_size = 16
-            for chunk_i in range(0, len(companies), chunk_size):
-                chunk = companies[chunk_i:chunk_i + chunk_size]
-                part_suffix = f" (Part {chunk_i // chunk_size + 1})" if len(companies) > chunk_size else ""
-                mid = (len(chunk) + 1) // 2
-                left_chunk = chunk[:mid]
-                right_chunk = chunk[mid:]
-                slides.append({
-                    "template_id": "05_insight_information",
-                    "slide_index": len(slides),
-                    "data": {
-                        "title": f"{sec_title} — Key Profiles & Ecosystem{part_suffix}",
-                        "left_column": [
-                            {
-                                "type": "bullet_list",
-                                "id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_l",
-                                "items": [
-                                    {"id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_l_{i}", "text": c, "level": 0}
-                                    for i, c in enumerate(left_chunk)
-                                ]
+                    if chart_block:
+                        slides.append({
+                            "template_id": "07_large_chart",
+                            "slide_index": len(slides),
+                            "data": {
+                                "title": chart_block.get("title", "Data Visualization"),
+                                "chart": chart_block
                             }
-                        ],
-                        "right_column": [
-                            {
-                                "type": "bullet_list",
-                                "id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_r",
-                                "items": [
-                                    {"id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_r_{i}", "text": c, "level": 0}
-                                    for i, c in enumerate(right_chunk)
-                                ]
-                            }
-                        ]
-                    }
-                })
+                        })
+                        self.stats["charts_generated"] += 1
+            
+            # Remaining Insights
+            if insight_queue and len(insight_queue) >= 2:
+                left_items = []
+                right_items = []
+                for i, ins in enumerate(insight_queue[:6]):
+                    target = left_items if i % 2 == 0 else right_items
+                    target.append({
+                        "type": "text",
+                        "id": f"t_{sec_num}_ins_{i}",
+                        "role": "paragraph",
+                        "text": ins["text"]
+                    })
+                
+                if left_items or right_items:
+                    slides.append({
+                        "template_id": "05_insight_information",
+                        "slide_index": len(slides),
+                        "data": {
+                            "title": f"{sec_title} — Key Findings",
+                            "left_column": left_items if left_items else [{"type": "text", "id": f"t_{sec_num}_empty_l", "role": "paragraph", "text": "See data tables for detailed analysis."}],
+                            "right_column": right_items if right_items else [{"type": "text", "id": f"t_{sec_num}_empty_r", "role": "paragraph", "text": "Additional intelligence available in supplementary data."}]
+                        }
+                    })
+            
+            # Company Lists
+            for cl_idx, companies in enumerate(company_lists):
+                chunk_size = 16
+                for chunk_i in range(0, len(companies), chunk_size):
+                    chunk = companies[chunk_i:chunk_i + chunk_size]
+                    part_suffix = f" (Part {chunk_i // chunk_size + 1})" if len(companies) > chunk_size else ""
+                    mid = (len(chunk) + 1) // 2
+                    left_chunk = chunk[:mid]
+                    right_chunk = chunk[mid:]
+                    slides.append({
+                        "template_id": "05_insight_information",
+                        "slide_index": len(slides),
+                        "data": {
+                            "title": f"{sec_title} — Key Profiles & Ecosystem{part_suffix}",
+                            "left_column": [
+                                {
+                                    "type": "bullet_list",
+                                    "id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_l",
+                                    "items": [
+                                        {"id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_l_{i}", "text": c, "level": 0}
+                                        for i, c in enumerate(left_chunk)
+                                    ]
+                                }
+                            ],
+                            "right_column": [
+                                {
+                                    "type": "bullet_list",
+                                    "id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_r",
+                                    "items": [
+                                        {"id": f"cl_{sec_num}_{cl_idx}_{chunk_i}_r_{i}", "text": c, "level": 0}
+                                        for i, c in enumerate(right_chunk)
+                                    ]
+                                }
+                            ]
+                        }
+                    })
 
 
 def parse_html_to_json(

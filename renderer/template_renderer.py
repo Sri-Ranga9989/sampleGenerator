@@ -322,56 +322,78 @@ class TemplateRenderer:
 
         results = [lr]
 
-        # If overflow items exist -> route to 05_insight_information (multi-column index list)
+        # If overflow items exist -> route to 05_insight_information (multi-column index list on bg_02)
         if overflow_items:
             lr.overflow_status = "SPLIT"
-            cont_lr = LayoutResult(
-                slide_id=f"{slide.slide_id}_cont_05",
-                slide_index=slide.slide_index + 1,
-                template_id="05_insight_information",
-                background="bg_02.png",
-                title=f"{sec_title} (Continued Index)",
-                overflow_status="CONTINUED"
-            )
+            chunk_size = 24  # Max 12 items per column on continuation slide
+            num_chunks = (len(overflow_items) + chunk_size - 1) // chunk_size
 
-            # Distribute overflow items into 2 columns
-            num_left = (len(overflow_items) + 1) // 2
-            left_col_items = overflow_items[:num_left]
-            right_col_items = overflow_items[num_left:]
+            for chunk_idx in range(num_chunks):
+                chunk = overflow_items[chunk_idx * chunk_size : (chunk_idx + 1) * chunk_size]
+                part_title = f"{sec_title} (Continued Index)" if num_chunks == 1 else f"{sec_title} (Continued Index - Part {chunk_idx + 1})"
+                cont_lr = LayoutResult(
+                    slide_id=f"{slide.slide_id}_cont_05_{chunk_idx + 1}",
+                    slide_index=slide.slide_index + chunk_idx + 1,
+                    template_id="05_insight_information",
+                    background="bg_02.png",
+                    title=part_title,
+                    overflow_status="CONTINUED"
+                )
 
-            # Left column
-            curr_y_l = 180.0
-            for it in left_col_items:
+                # Slide Title
+                t_meas = fit_text_to_budget(part_title, 1600.0, 70.0, 22, 16)
                 cont_lr.components.append(ComponentGeometry(
-                    component_id=f"cont_idx_{it.id}",
-                    component_type="index_item",
+                    component_id="slide_title",
+                    component_type="text",
                     x=105.0,
-                    y=curr_y_l,
-                    width=750.0,
-                    height=34.0,
-                    data=it,
-                    font_size=13,
-                    provenance_id=it.id
+                    y=45.0,
+                    width=1600.0,
+                    height=t_meas["height"],
+                    data=part_title,
+                    font_size=t_meas["font_size"],
+                    style={"bold": True, "color": Theme.PRIMARY_NAVY},
+                    provenance_id=f"{sec_title_id}_cont_title_{chunk_idx + 1}"
                 ))
-                curr_y_l += 38.0
 
-            # Right column
-            curr_y_r = 180.0
-            for it in right_col_items:
-                cont_lr.components.append(ComponentGeometry(
-                    component_id=f"cont_idx_{it.id}",
-                    component_type="index_item",
-                    x=945.0,
-                    y=curr_y_r,
-                    width=750.0,
-                    height=34.0,
-                    data=it,
-                    font_size=13,
-                    provenance_id=it.id
-                ))
-                curr_y_r += 38.0
+                # Distribute chunk items into 2 columns
+                num_left = (len(chunk) + 1) // 2
+                left_col_items = chunk[:num_left]
+                right_col_items = chunk[num_left:]
+                start_y = max(130.0, 45.0 + t_meas["height"] + 20.0)
 
-            results.append(cont_lr)
+                # Left column
+                curr_y_l = start_y
+                for it in left_col_items:
+                    cont_lr.components.append(ComponentGeometry(
+                        component_id=f"cont_idx_{it.id}",
+                        component_type="index_item",
+                        x=105.0,
+                        y=curr_y_l,
+                        width=750.0,
+                        height=34.0,
+                        data=it,
+                        font_size=13,
+                        provenance_id=it.id
+                    ))
+                    curr_y_l += 38.0
+
+                # Right column
+                curr_y_r = start_y
+                for it in right_col_items:
+                    cont_lr.components.append(ComponentGeometry(
+                        component_id=f"cont_idx_{it.id}",
+                        component_type="index_item",
+                        x=945.0,
+                        y=curr_y_r,
+                        width=750.0,
+                        height=34.0,
+                        data=it,
+                        font_size=13,
+                        provenance_id=it.id
+                    ))
+                    curr_y_r += 38.0
+
+                results.append(cont_lr)
 
         return results
 
@@ -388,7 +410,7 @@ class TemplateRenderer:
         )
 
         data = slide.data.regions
-        # Context note
+        # Context note (left column, above chart)
         note_text, note_id = self._extract_text_and_id(data.get("context_note"), "Market Dynamics & Performance Overview", f"s{slide.slide_index+1}_context_note")
         c_reg = annotation["regions"]["context_note"]
         lr.components.append(ComponentGeometry(
@@ -404,7 +426,7 @@ class TemplateRenderer:
             provenance_id=note_id
         ))
 
-        # Chart
+        # Chart (left column)
         chart_data = data.get("chart")
         if isinstance(chart_data, ChartBlock):
             ch_reg = annotation["regions"]["chart"]
@@ -427,48 +449,87 @@ class TemplateRenderer:
                 provenance_id=chart_data.id
             ))
 
-        # Right column: Section heading
+        # ── Right column: measure heading FIRST, then cascade positions ──
         sec_heading, sh_id = self._extract_text_and_id(data.get("section_heading", data.get("heading")), "Segment Analysis", f"s{slide.slide_index+1}_section_heading")
         sh_reg = annotation["regions"]["section_heading"]
+        heading_font = 22  # per project spec: headings = 22pt
+        heading_width = sh_reg["width"]
+
+        # Measure heading to determine actual height: step down font size if needed to fit single line
+        single_line_budget = 42.0
+        chosen_heading_font = heading_font
+        meas = measure_multiline_text(sec_heading, "arial", chosen_heading_font, heading_width, line_spacing=1.15)
+        if meas["height"] > single_line_budget:
+            for s in range(heading_font - 1, 11, -1):
+                c_meas = measure_multiline_text(sec_heading, "arial", s, heading_width, line_spacing=1.15)
+                if c_meas["height"] <= single_line_budget:
+                    chosen_heading_font = s
+                    meas = c_meas
+                    break
+            else:
+                chosen_heading_font = 12
+                meas = measure_multiline_text(sec_heading, "arial", chosen_heading_font, heading_width, line_spacing=1.15)
+        heading_actual_h = max(meas["height"] + 4.0, 36.0)
+
+        # Spacing between heading bottom and narrative top
+        spacing = annotation.get("spacing", {})
+        heading_to_narrative_gap = spacing.get("heading_to_narrative", 8)
+        narrative_to_table_gap = spacing.get("narrative_to_table", 15)
+        table_to_insight_gap = spacing.get("table_to_insight", 25)
+
+        heading_y = sh_reg["y"]
         lr.components.append(ComponentGeometry(
             component_id="section_heading",
             component_type="text",
             x=sh_reg["x"],
-            y=sh_reg["y"],
-            width=sh_reg["width"],
-            height=40.0,
+            y=heading_y,
+            width=heading_width,
+            height=heading_actual_h,
             data=sec_heading,
-            font_size=16,
+            font_size=chosen_heading_font,
             style={"bold": True, "color": Theme.PRIMARY_NAVY},
             provenance_id=sh_id
         ))
 
-        # Narrative
+        # ── Narrative: position dynamically below heading ──
         narrative, nar_id = self._extract_text_and_id(data.get("narrative"), "Detailed market metrics indicate sustained adoption across key sub-sectors.", f"s{slide.slide_index+1}_narrative")
         nar_reg = annotation["regions"]["narrative"]
+        narrative_y = heading_y + heading_actual_h + heading_to_narrative_gap
+        # Measure actual narrative height: take limited space rather than maximum space
+        nar_meas = measure_multiline_text(narrative, "arial", 10, nar_reg["width"], line_spacing=1.15)
+        narrative_height = max(24.0, min(float(nar_reg["height"]), nar_meas["height"] + 8.0))
         lr.components.append(ComponentGeometry(
             component_id="narrative",
             component_type="text",
             x=nar_reg["x"],
-            y=nar_reg["y"],
+            y=narrative_y,
             width=nar_reg["width"],
-            height=60.0,
+            height=narrative_height,
             data=narrative,
-            font_size=11,
+            font_size=10,  # per project spec: content = 10pt
             style={"bold": False, "color": Theme.TEXT_DARK},
             provenance_id=nar_id
         ))
 
-        # Table
+        # ── Table: position dynamically below narrative ──
         tbl_data = data.get("table")
+        table_y = narrative_y + narrative_height + narrative_to_table_gap
         if isinstance(tbl_data, TableBlock):
             t_reg = annotation["regions"]["table"]
+            # Calculate remaining height budget for table
+            canvas_bottom = annotation.get("safe_area", {}).get("y", 48) + annotation.get("safe_area", {}).get("height", 984)
+            if canvas_bottom == 0:
+                canvas_bottom = 1032  # default safe area bottom
+            insight_reserve = 140  # reserve for insight card
+            table_height_budget = canvas_bottom - table_y - table_to_insight_gap - insight_reserve
+            table_height_budget = max(table_height_budget, t_reg["height"])  # don't shrink below annotation default
+
             rows_raw = [[c.value for c in r.cells] for r in tbl_data.rows]
             tbl_layout = TableLayoutEngine.layout_table(
                 headers=tbl_data.headers,
                 rows=rows_raw,
                 available_width=t_reg["width"],
-                available_height=t_reg["height"],
+                available_height=table_height_budget,
                 preferred_font_size=10,
                 minimum_font_size=8
             )
@@ -476,22 +537,27 @@ class TemplateRenderer:
                 component_id="table",
                 component_type="table",
                 x=t_reg["x"],
-                y=t_reg["y"],
+                y=table_y,
                 width=t_reg["width"],
                 height=tbl_layout.total_height,
                 data=tbl_layout,
                 provenance_id=tbl_data.id
             ))
+            # Track actual table bottom for insight positioning
+            table_bottom = table_y + tbl_layout.total_height
+        else:
+            table_bottom = table_y
 
-        # Supporting insight
+        # ── Supporting insight: position dynamically below table ──
         insight_data = data.get("supporting_insight", data.get("insight"))
         if isinstance(insight_data, InsightBlock):
             ins_reg = annotation["regions"]["supporting_insight"]
+            insight_y = table_bottom + table_to_insight_gap
             lr.components.append(ComponentGeometry(
                 component_id="supporting_insight",
                 component_type="insight",
                 x=ins_reg["x"],
-                y=ins_reg["y"],
+                y=insight_y,
                 width=ins_reg["width"],
                 height=ins_reg["height"],
                 data=insight_data,
@@ -708,38 +774,42 @@ class TemplateRenderer:
             title=title_text
         )
 
-        # Title
+        # Title: step down font size if needed to fit single line
+        t_meas = fit_text_to_budget(title_text, 1700.0, 50.0, 22, 14)
+        t_h = max(t_meas["height"], 40.0)
         lr.components.append(ComponentGeometry(
             component_id="chart_title",
             component_type="text",
             x=105.0,
             y=50.0,
             width=1700.0,
-            height=50.0,
+            height=t_h,
             data=title_text,
-            font_size=24,
+            font_size=t_meas["font_size"],
             style={"bold": True, "color": Theme.PRIMARY_NAVY},
             provenance_id=title_id
         ))
 
-        # Chart
+        # Chart: position dynamically below title
         ch_reg = annotation["regions"]["chart"]
+        chart_y = max(float(ch_reg["y"]), 50.0 + t_h + 20.0)
+        chart_h = min(float(ch_reg["height"]), 1020.0 - chart_y)
         if isinstance(chart_data, ChartBlock):
             ch_layout = ChartLayoutEngine.layout_chart(
                 chart_type=chart_data.chart_type,
                 categories=chart_data.categories,
                 series_names=[s.name for s in chart_data.series],
                 available_width=ch_reg["width"],
-                available_height=ch_reg["height"],
+                available_height=chart_h,
                 title=chart_data.title
             )
             lr.components.append(ComponentGeometry(
                 component_id="chart",
                 component_type="chart",
                 x=ch_reg["x"],
-                y=ch_reg["y"],
+                y=chart_y,
                 width=ch_reg["width"],
-                height=ch_reg["height"],
+                height=chart_h,
                 data=(chart_data, ch_layout),
                 provenance_id=chart_data.id
             ))
@@ -750,5 +820,73 @@ class TemplateRenderer:
     # 08_multi_table_dashboard_2col
     # -------------------------------------------------------------
     def _layout_08(self, slide: Slide, annotation: Dict[str, Any], background: str) -> List[LayoutResult]:
-        # Multi-table dashboard uses 2-column dynamic stacking (similar to 05, with tables)
+        # Multi-table dashboard: check capacity before deciding layout
+        t_text, t_id = self._extract_text_and_id(slide.data.regions.get("title"), slide.title or "Multi-Table Dashboard", f"s{slide.slide_index+1}_title")
+        t_meas = fit_text_to_budget(t_text, 1600.0, 90.0, 22, 16)
+        start_col_y = max(130.0, 45.0 + t_meas["height"] + 20.0)
+        avail_col_h = 1010.0 - start_col_y
+
+        left_blocks = slide.data.left_column_blocks or []
+        right_blocks = slide.data.right_column_blocks or []
+        if not left_blocks and not right_blocks:
+            for k, v in slide.data.regions.items():
+                if "left" in k.lower():
+                    if isinstance(v, list):
+                        left_blocks.extend(v)
+                    else:
+                        left_blocks.append(v)
+                elif "right" in k.lower():
+                    if isinstance(v, list):
+                        right_blocks.extend(v)
+                    else:
+                        right_blocks.append(v)
+
+        # Simulation layout: check if both columns comfortably fit
+        l_res = StackLayoutEngine.layout_vertical_stack(left_blocks, x=105.0, start_y=start_col_y, width=790.0, available_height=avail_col_h)
+        r_res = StackLayoutEngine.layout_vertical_stack(right_blocks, x=945.0, start_y=start_col_y, width=790.0, available_height=avail_col_h)
+
+        # If either column overflows the space budget: show ONE table at a time on separate slides
+        if l_res.overflow_blocks or r_res.overflow_blocks:
+            results = []
+            cols = [("Left", left_blocks, 1), ("Right", right_blocks, 2)]
+            for col_name, blocks, col_idx in cols:
+                if not blocks:
+                    continue
+                t_title = f"{t_text} - Part {col_idx}"
+                tbl_block = None
+                for b in blocks:
+                    if isinstance(b, TableBlock) or (isinstance(b, dict) and (b.get("type") == "table" or "headers" in b)):
+                        tbl_block = b
+                    elif isinstance(b, TextBlock) and b.role == "heading":
+                        t_title = b.text
+                    elif isinstance(b, dict) and b.get("role") == "heading":
+                        t_title = b.get("text", t_title)
+
+                if tbl_block:
+                    sub_slide = Slide(
+                        slide_id=f"{slide.slide_id}_tbl_{col_idx}",
+                        template_id="06_large_table",
+                        slide_index=slide.slide_index + len(results),
+                        title=t_title,
+                        data=SlideData(regions={
+                            "title": t_title,
+                            "table": tbl_block,
+                            "table_title": t_title
+                        })
+                    )
+                    ann_06 = self.get_annotation("06_large_table")
+                    results.extend(self._layout_06(sub_slide, ann_06, background))
+                else:
+                    sub_slide = Slide(
+                        slide_id=f"{slide.slide_id}_info_{col_idx}",
+                        template_id="05_insight_information",
+                        slide_index=slide.slide_index + len(results),
+                        title=t_title,
+                        data=SlideData(regions={"left_column": blocks, "title": t_title})
+                    )
+                    ann_05 = self.get_annotation("05_insight_information")
+                    results.extend(self._layout_05(sub_slide, ann_05, background))
+            return results
+
+        # If both fit cleanly on one slide, render standard 2-column layout
         return self._layout_05(slide, annotation, background)

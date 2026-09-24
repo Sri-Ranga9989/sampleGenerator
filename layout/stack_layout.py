@@ -169,15 +169,94 @@ class StackLayoutEngine:
     @staticmethod
     def _measure_block(block: Any, width: float, font_name: str) -> Tuple[str, float, float, str]:
         """Returns (block_type, measured_height, font_size, block_id)."""
-        b_id = getattr(block, "id", "block_unknown")
+        b_id = getattr(block, "id", None) or (block.get("id", "block_unknown") if isinstance(block, dict) else "block_unknown")
 
+        # 1. Dictionary block handling
+        if isinstance(block, dict):
+            b_type = block.get("type", "text")
+            if b_type == "text" or "text" in block or "value" in block:
+                text_val = str(block.get("value", block.get("text", "")))
+                role = block.get("role", "paragraph")
+                if role in ("heading", "title"):
+                    pref_size = 22 if role == "title" else 18
+                    min_size = 12
+                    single_line_budget = 36.0
+                    chosen_size = pref_size
+                    meas = measure_multiline_text(text_val, font_name, chosen_size, width, line_spacing=1.15)
+                    if meas["height"] > single_line_budget:
+                        for s in range(pref_size - 1, min_size - 1, -1):
+                            c_meas = measure_multiline_text(text_val, font_name, s, width, line_spacing=1.15)
+                            if c_meas["height"] <= single_line_budget:
+                                chosen_size = s
+                                meas = c_meas
+                                break
+                        else:
+                            chosen_size = min_size
+                            meas = measure_multiline_text(text_val, font_name, chosen_size, width, line_spacing=1.15)
+                    return ("text", meas["height"] + 6.0, chosen_size, b_id)
+                else:
+                    f_size = 10
+                    meas = measure_multiline_text(text_val, font_name, f_size, width, line_spacing=1.15)
+                    return ("text", meas["height"] + 4.0, f_size, b_id)
+
+            elif b_type == "insight" or ("title" in block and "body" in block):
+                f_size = 10
+                ins_title = block.get("title", "KEY INSIGHT")
+                ins_body = block.get("body", block.get("text", ""))
+                meas_t = measure_multiline_text(ins_title, font_name, 11, width - 24.0)
+                meas_b = measure_multiline_text(ins_body, font_name, f_size, width - 24.0)
+                h = meas_t["height"] + meas_b["height"] + 20.0
+                return ("insight", max(60.0, h), f_size, b_id)
+
+            elif b_type == "table" or ("headers" in block and "rows" in block):
+                f_size = 9
+                headers = block.get("headers", [])
+                raw_rows = block.get("rows", [])
+                rows_data = []
+                for r in raw_rows:
+                    if isinstance(r, dict):
+                        cells = r.get("cells", [])
+                        rows_data.append([c.get("value", "") if isinstance(c, dict) else str(c) for c in cells])
+                    elif isinstance(r, list):
+                        rows_data.append([str(c) for c in r])
+                table_res = TableLayoutEngine.layout_table(
+                    headers=headers,
+                    rows=rows_data,
+                    available_width=width,
+                    available_height=9999.0,
+                    preferred_font_size=f_size,
+                    minimum_font_size=8,
+                    min_row_height=33.0,
+                    font_name=font_name
+                )
+                return ("table", table_res.total_height + 12.0, f_size, b_id)
+
+        # 2. TextBlock object
         if isinstance(block, TextBlock):
-            f_size = 14 if block.role == "heading" else (16 if block.role == "title" else 11)
-            meas = measure_multiline_text(block.text, font_name, f_size, width, line_spacing=1.2)
-            return ("text", meas["height"] + 4.0, f_size, b_id)
+            if block.role in ("heading", "title"):
+                pref_size = 22 if block.role == "title" else 18
+                min_size = 12
+                single_line_budget = 36.0
+                chosen_size = pref_size
+                meas = measure_multiline_text(block.text, font_name, chosen_size, width, line_spacing=1.15)
+                if meas["height"] > single_line_budget:
+                    for s in range(pref_size - 1, min_size - 1, -1):
+                        c_meas = measure_multiline_text(block.text, font_name, s, width, line_spacing=1.15)
+                        if c_meas["height"] <= single_line_budget:
+                            chosen_size = s
+                            meas = c_meas
+                            break
+                    else:
+                        chosen_size = min_size
+                        meas = measure_multiline_text(block.text, font_name, chosen_size, width, line_spacing=1.15)
+                return ("text", meas["height"] + 6.0, chosen_size, b_id)
+            else:
+                f_size = 10
+                meas = measure_multiline_text(block.text, font_name, f_size, width, line_spacing=1.15)
+                return ("text", meas["height"] + 4.0, f_size, b_id)
 
         elif isinstance(block, BulletListBlock):
-            f_size = 11
+            f_size = 10
             total_h = 0.0
             for item in block.items:
                 indent = item.level * 16.0
@@ -187,7 +266,6 @@ class StackLayoutEngine:
 
         elif isinstance(block, TableBlock):
             f_size = 9
-            # Quick estimate
             rows_data = [[c.value for c in r.cells] for r in block.rows]
             table_res = TableLayoutEngine.layout_table(
                 headers=block.headers,
@@ -205,7 +283,7 @@ class StackLayoutEngine:
             f_size = 10
             meas_t = measure_multiline_text(block.title, font_name, 11, width - 24.0)
             meas_b = measure_multiline_text(block.body, font_name, f_size, width - 24.0)
-            h = meas_t["height"] + meas_b["height"] + 20.0  # Card padding
+            h = meas_t["height"] + meas_b["height"] + 20.0
             return ("insight", max(60.0, h), f_size, b_id)
 
         elif isinstance(block, IndexItem):
@@ -213,7 +291,7 @@ class StackLayoutEngine:
             meas = measure_multiline_text(block.title, font_name, f_size, max(20.0, width - 50.0))
             return ("index_item", max(28.0, meas["height"] + 8.0), f_size, b_id)
 
-        # Fallback string or dict
+        # Fallback string or other object
         text_val = getattr(block, "text", str(block))
-        meas = measure_multiline_text(text_val, font_name, 11, width)
-        return ("text", meas["height"] + 4.0, 11, b_id)
+        meas = measure_multiline_text(text_val, font_name, 10, width)
+        return ("text", meas["height"] + 4.0, 10, b_id)
