@@ -127,8 +127,8 @@ class TableLayoutEngine:
                 val = r_data[col_idx] if col_idx < len(r_data) else ""
                 val_str = str(val) if val is not None else ""
 
-                # Measure with wrapping inside cell width (minus padding)
-                inner_w = max(10.0, w - 12.0)
+                # Measure with wrapping inside cell width (minus PPT cell margins and internal text buffer)
+                inner_w = max(10.0, w - 20.0)
                 meas = measure_multiline_text(val_str, font_name, f_size, inner_w, line_spacing=1.15)
                 cell_h = meas["height"]
                 if cell_h > max_cell_h:
@@ -144,8 +144,9 @@ class TableLayoutEngine:
                 ))
 
             max_lines = max((len(c.lines) for c in cell_layouts), default=1)
+            line_h = float(f_size) * 2.0 * 1.2
             if max_lines > 1:
-                natural_h = max_cell_h + padding_y
+                natural_h = max_cell_h + padding_y + 4.0
                 allocated_h = max(natural_h, min_row_height)
             else:
                 natural_h = min_row_height

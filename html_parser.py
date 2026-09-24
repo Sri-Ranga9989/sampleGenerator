@@ -612,8 +612,8 @@ class EmailReportParser:
                                 flat_rows.append([str(c) for c in row])
                         chart_block = analyze_table_for_chart(table_id, headers, flat_rows, table_title)
 
-                    # 1. Compact table + auto-chart -> 04_table_chart
-                    if chart_block and len(table.get("rows", [])) <= 12:
+                    # 1. Compact table + auto-chart -> 04_table_chart (tables <= 6 rows fit half-column gracefully)
+                    if chart_block and len(table.get("rows", [])) <= 6:
                         clean_table = {k: v for k, v in table.items() if not k.startswith("_")}
                         slides.append({
                             "template_id": "04_table_chart",
@@ -802,7 +802,8 @@ class EmailReportParser:
                     
                     chart_block = analyze_table_for_chart(table_id, headers, flat_rows, table_title)
                 
-                if chart_block and len(table.get("rows", [])) <= 12:
+                # 1. Compact table + auto-chart -> 04_table_chart (tables <= 6 rows fit half-column gracefully)
+                if chart_block and len(table.get("rows", [])) <= 6:
                     insight_text = ""
                     if insight_queue:
                         ins = insight_queue.pop(0)

@@ -50,10 +50,16 @@ class TableRenderer:
                 cell.vertical_anchor = MSO_ANCHOR.MIDDLE
 
                 # Cell padding
-                cell.margin_left = Pt(4)
-                cell.margin_right = Pt(4)
-                cell.margin_top = Pt(2)
-                cell.margin_bottom = Pt(2)
+                if num_rows >= 8:
+                    cell.margin_left = Pt(3)
+                    cell.margin_right = Pt(3)
+                    cell.margin_top = Pt(1.5)
+                    cell.margin_bottom = Pt(1.5)
+                else:
+                    cell.margin_left = Pt(4)
+                    cell.margin_right = Pt(4)
+                    cell.margin_top = Pt(2)
+                    cell.margin_bottom = Pt(2)
 
                 # Fill color
                 cell.fill.solid()

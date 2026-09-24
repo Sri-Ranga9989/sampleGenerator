@@ -8,7 +8,7 @@ import json
 import os
 from typing import List, Dict, Any, Optional
 from layout.layout_result import LayoutResult, RegionGeometry, ComponentGeometry
-from layout.text_measurement import measure_multiline_text, fit_text_to_budget
+from layout.text_measurement import measure_multiline_text, measure_single_line, fit_text_to_budget
 from layout.table_layout import TableLayoutEngine, TableLayoutResult
 from layout.chart_layout import ChartLayoutEngine, ChartLayoutResult
 from layout.stack_layout import StackLayoutEngine
@@ -455,27 +455,30 @@ class TemplateRenderer:
         heading_font = 22  # per project spec: headings = 22pt
         heading_width = sh_reg["width"]
 
-        # Measure heading to determine actual height: step down font size if needed to fit single line
-        single_line_budget = 42.0
+        # Safe text width inside text box (accounting for margins, kerning, and padding)
+        safe_heading_width = heading_width - 50.0
         chosen_heading_font = heading_font
-        meas = measure_multiline_text(sec_heading, "arial", chosen_heading_font, heading_width, line_spacing=1.15)
-        if meas["height"] > single_line_budget:
-            for s in range(heading_font - 1, 11, -1):
-                c_meas = measure_multiline_text(sec_heading, "arial", s, heading_width, line_spacing=1.15)
-                if c_meas["height"] <= single_line_budget:
-                    chosen_heading_font = s
-                    meas = c_meas
-                    break
-            else:
-                chosen_heading_font = 12
-                meas = measure_multiline_text(sec_heading, "arial", chosen_heading_font, heading_width, line_spacing=1.15)
-        heading_actual_h = max(meas["height"] + 4.0, 36.0)
+
+        # Step down font size from 22 down to 13 if single-line width exceeds safe width
+        for s in range(heading_font, 12, -1):
+            sw, _ = measure_single_line(sec_heading, "arial", s)
+            if sw <= safe_heading_width:
+                chosen_heading_font = s
+                break
+        else:
+            chosen_heading_font = 13
+
+        # Check line count at chosen font
+        meas = measure_multiline_text(sec_heading, "arial", chosen_heading_font, safe_heading_width, line_spacing=1.15)
+        line_count = max(1, len(meas["lines"]))
+        line_h = float(chosen_heading_font) * 2.0 * 1.2
+        heading_actual_h = max(line_count * line_h + 8.0, 36.0)
 
         # Spacing between heading bottom and narrative top
         spacing = annotation.get("spacing", {})
-        heading_to_narrative_gap = spacing.get("heading_to_narrative", 8)
+        heading_to_narrative_gap = max(12, spacing.get("heading_to_narrative", 8))
         narrative_to_table_gap = spacing.get("narrative_to_table", 15)
-        table_to_insight_gap = spacing.get("table_to_insight", 25)
+        table_to_insight_gap = spacing.get("table_to_insight", 20)
 
         heading_y = sh_reg["y"]
         lr.components.append(ComponentGeometry(
@@ -496,8 +499,9 @@ class TemplateRenderer:
         nar_reg = annotation["regions"]["narrative"]
         narrative_y = heading_y + heading_actual_h + heading_to_narrative_gap
         # Measure actual narrative height: take limited space rather than maximum space
-        nar_meas = measure_multiline_text(narrative, "arial", 10, nar_reg["width"], line_spacing=1.15)
-        narrative_height = max(24.0, min(float(nar_reg["height"]), nar_meas["height"] + 8.0))
+        nar_meas = measure_multiline_text(narrative, "arial", 10, nar_reg["width"] - 20.0, line_spacing=1.15)
+        nar_line_count = max(1, len(nar_meas["lines"]))
+        narrative_height = max(24.0, min(float(nar_reg["height"]), nar_line_count * 24.0 + 8.0))
         lr.components.append(ComponentGeometry(
             component_id="narrative",
             component_type="text",
@@ -514,24 +518,63 @@ class TemplateRenderer:
         # ── Table: position dynamically below narrative ──
         tbl_data = data.get("table")
         table_y = narrative_y + narrative_height + narrative_to_table_gap
-        if isinstance(tbl_data, TableBlock):
-            t_reg = annotation["regions"]["table"]
-            # Calculate remaining height budget for table
-            canvas_bottom = annotation.get("safe_area", {}).get("y", 48) + annotation.get("safe_area", {}).get("height", 984)
-            if canvas_bottom == 0:
-                canvas_bottom = 1032  # default safe area bottom
-            insight_reserve = 140  # reserve for insight card
-            table_height_budget = canvas_bottom - table_y - table_to_insight_gap - insight_reserve
-            table_height_budget = max(table_height_budget, t_reg["height"])  # don't shrink below annotation default
+        table_bottom = table_y
 
-            rows_raw = [[c.value for c in r.cells] for r in tbl_data.rows]
+        # Check insight existence and reserve
+        insight_data = data.get("supporting_insight", data.get("insight"))
+        has_insight = isinstance(insight_data, InsightBlock) or (isinstance(insight_data, dict) and bool(insight_data))
+        ins_reg = annotation["regions"].get("supporting_insight", {})
+        insight_h = float(ins_reg.get("height", 130.0)) if has_insight else 0.0
+        insight_reserve = (insight_h + table_to_insight_gap) if has_insight else 0.0
+
+        safe_reg = annotation.get("safe_area", {})
+        canvas_bottom = float(safe_reg.get("y", 48)) + float(safe_reg.get("height", 984))
+        if canvas_bottom <= 0:
+            canvas_bottom = 1032.0
+
+        table_height_budget = max(100.0, canvas_bottom - table_y - insight_reserve)
+
+        if isinstance(tbl_data, TableBlock) or (isinstance(tbl_data, dict) and "headers" in tbl_data):
+            t_reg = annotation["regions"]["table"]
+            if isinstance(tbl_data, TableBlock):
+                headers = tbl_data.headers
+                rows_raw = [[c.value for c in r.cells] for r in tbl_data.rows]
+                tbl_prov_id = tbl_data.id
+            else:
+                headers = tbl_data.get("headers", [])
+                rows_in = tbl_data.get("rows", [])
+                rows_raw = []
+                for r in rows_in:
+                    if isinstance(r, dict):
+                        cells = r.get("cells", [])
+                        rows_raw.append([c.get("value", "") if isinstance(c, dict) else str(c) for c in cells])
+                    elif isinstance(r, list):
+                        rows_raw.append([str(c) for c in r])
+                tbl_prov_id = tbl_data.get("id", f"s{slide.slide_index+1}_table")
+
+            # Determine table font size based on row count and budget
+            num_rows = len(rows_raw)
+            if num_rows >= 8:
+                pref_font = 8
+                min_font = 7
+                min_row_h = 28.0
+            elif num_rows >= 6:
+                pref_font = 9
+                min_font = 7
+                min_row_h = 30.0
+            else:
+                pref_font = 10
+                min_font = 8
+                min_row_h = 32.0
+
             tbl_layout = TableLayoutEngine.layout_table(
-                headers=tbl_data.headers,
+                headers=headers,
                 rows=rows_raw,
                 available_width=t_reg["width"],
                 available_height=table_height_budget,
-                preferred_font_size=10,
-                minimum_font_size=8
+                preferred_font_size=pref_font,
+                minimum_font_size=min_font,
+                min_row_height=min_row_h
             )
             lr.components.append(ComponentGeometry(
                 component_id="table",
@@ -541,28 +584,35 @@ class TemplateRenderer:
                 width=t_reg["width"],
                 height=tbl_layout.total_height,
                 data=tbl_layout,
-                provenance_id=tbl_data.id
+                provenance_id=tbl_prov_id
             ))
-            # Track actual table bottom for insight positioning
             table_bottom = table_y + tbl_layout.total_height
-        else:
-            table_bottom = table_y
 
         # ── Supporting insight: position dynamically below table ──
-        insight_data = data.get("supporting_insight", data.get("insight"))
-        if isinstance(insight_data, InsightBlock):
-            ins_reg = annotation["regions"]["supporting_insight"]
+        if has_insight:
             insight_y = table_bottom + table_to_insight_gap
-            lr.components.append(ComponentGeometry(
-                component_id="supporting_insight",
-                component_type="insight",
-                x=ins_reg["x"],
-                y=insight_y,
-                width=ins_reg["width"],
-                height=ins_reg["height"],
-                data=insight_data,
-                provenance_id=insight_data.id
-            ))
+            actual_insight_h = min(insight_h, max(50.0, canvas_bottom - insight_y))
+            # Only add insight if it fits within safe area
+            if insight_y + 40.0 <= canvas_bottom:
+                if isinstance(insight_data, dict):
+                    insight_obj = InsightBlock(
+                        id=insight_data.get("id", f"s{slide.slide_index+1}_ins"),
+                        title=insight_data.get("title", "KEY INSIGHT"),
+                        body=insight_data.get("body", "")
+                    )
+                else:
+                    insight_obj = insight_data
+
+                lr.components.append(ComponentGeometry(
+                    component_id="supporting_insight",
+                    component_type="insight",
+                    x=ins_reg.get("x", 960),
+                    y=insight_y,
+                    width=ins_reg.get("width", 730),
+                    height=actual_insight_h,
+                    data=insight_obj,
+                    provenance_id=getattr(insight_obj, "id", None)
+                ))
 
         return [lr]
 
