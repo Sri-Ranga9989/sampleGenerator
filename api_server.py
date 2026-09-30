@@ -18,7 +18,8 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, Query
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 
 from html_parser import parse_html_to_json
 from models.report_model import ReportParser
@@ -33,6 +34,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 OUTPUT_BASE = os.path.join(os.path.dirname(__file__), "output")
 
 
@@ -41,6 +50,12 @@ def _ensure_output_dir(run_id: str) -> str:
     run_dir = os.path.join(OUTPUT_BASE, run_id)
     os.makedirs(run_dir, exist_ok=True)
     return run_dir
+
+
+@app.get("/")
+async def root():
+    """Redirect root to interactive API documentation."""
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health")

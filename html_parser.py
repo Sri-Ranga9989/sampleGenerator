@@ -26,6 +26,11 @@ from typing import List, Dict, Any, Optional, Tuple
 from chart_analyzer import analyze_table_for_chart
 
 
+def _ts() -> str:
+    """Return a bracketed local timestamp for console logging."""
+    return datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
+
+
 # ─── Utility Functions (reused from build_full_email_report_json.py) ─────────
 
 def extract_table(table_tag) -> List[List[str]]:
@@ -207,14 +212,14 @@ class EmailReportParser:
         Returns:
             Canonical report dict compatible with ReportParser.parse_report_json()
         """
-        print(f"[PARSE] Loading HTML file: {html_path}")
+        print(f"{_ts()} [PARSE] Loading HTML file: {html_path}")
         
         html_content = self._read_html_file(html_path)
         soup = BeautifulSoup(html_content, "html.parser")
         
         # 1. Extract report title from <h1> or <title>
         report_title = self._extract_report_title(soup, html_path)
-        print(f"[PARSE] Report title: {report_title}")
+        print(f"{_ts()} [PARSE] Report title: {report_title}")
         
         # 2. Find the email body content (strip Gmail wrappers)
         body_content = self._find_email_body(soup)
@@ -241,7 +246,7 @@ class EmailReportParser:
             "slides": slides
         }
         
-        print(f"\n[PARSE] === Parsing Complete ===")
+        print(f"\n{_ts()} [PARSE] === Parsing Complete ===")
         print(f"  -> Sections detected: {self.stats['sections_detected']}")
         print(f"  -> Data tables extracted: {self.stats['data_tables']}")
         print(f"  -> Charts auto-generated: {self.stats['charts_generated']}")
@@ -988,7 +993,7 @@ def parse_html_to_json(
         os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
-        print(f"\n[PARSE] Saved JSON manifest: {output_path}")
+        print(f"\n{_ts()} [PARSE] Saved JSON manifest: {output_path}")
     
     return report, parser.stats, parser.warnings
 
